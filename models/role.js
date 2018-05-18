@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
 
-    var Role = sequelize.define('ROLE', {
+    var Role = sequelize.define('USER_ROLE', {
         role_id: {
             autoIncrement: true,
             primaryKey: true,
@@ -12,12 +12,12 @@ module.exports = (sequelize, Sequelize) => {
         }
     }, {
         freezeTableName: true,
-        tableName: 'ROLE',
+        tableName: 'USER_ROLE',
         timestamps: false
     });
 
     Role.associate = function(models) {
-        this.hasMany(models.USER, {foreignKey: 'role_id', targetKey: 'role_id'});
+        this.hasMany(models.USER_ROLE, {foreignKey: 'role_id', targetKey: 'role_id'});
     };
 
     Role.prototype.toWeb = function (pw) {
