@@ -1,4 +1,3 @@
-const User = require('../models').User;
 const authService = require('./../services/AuthService');
 
 const create = async function(req, res){
@@ -56,7 +55,6 @@ module.exports.remove = remove;
 
 
 const login = async function(req, res){
-    console.log(req.body)
     const body = req.body;
     let err, user;
 

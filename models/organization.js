@@ -45,18 +45,6 @@ module.exports = (sequelize, Sequelize) => {
         tableName: 'ORGANIZATION'
     });
 
-    Organization.prototype.comparePassword = async function (pw) {
-        let err, pass;
-        if(!this.password) TE('password not set');
-
-        [err, pass] = await to(bcrypt_p.compare(pw, this.password));
-        if(err) TE(err);
-
-        if(!pass) TE('invalid password');
-
-        return this;
-    }
-
     Organization.prototype.toWeb = function (pw) {
         let json = this.toJSON();
         return json;
