@@ -1,4 +1,6 @@
 const User = require('../models').USER;
+const Role = require('../models').USER_ROLE;
+
 const validator = require('validator');
 
 const getUniqueKeyFromBody = function(body){// this is so they can send in 3 options unique_key, email, or phone and it will work
@@ -53,13 +55,14 @@ const authUser = async function(userInfo){ //returns token
     if(validator.isEmail(unique_key)){
         auth_info.method='email';
         [err, user] = await to(User.findOne({where:{email:unique_key}}));
+        [err, role] = await to(Role.findOne({where: {role_id: user.dataValues.role_id }}));
+        user.dataValues.role_name = role.dataValues.role_name;
         console.log(err, user, unique_key);
         if(err) TE(err.message);
 
     }else{
         TE('A valid email was not entered');
     }
-
     if(!user) TE('Not registered');
 
     [err, user] = await to(user.comparePassword(userInfo.password));
