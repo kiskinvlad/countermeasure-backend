@@ -21,6 +21,6 @@ router.post('/filter',passport.authenticate('jwt', { session: false }), CaseCont
 //get filter params
 router.get('/filter_params',passport.authenticate('jwt', { session: false }), CaseController.getFilterParams);
 //get sort params
-router.post('/sort_params',passport.authenticate('jwt', { session: false }), CaseController.getSortParams);
+router.get('/sort_params',passport.authenticate('jwt', { session: false }), CaseController.getSortParams);
 
 module.exports = router;
