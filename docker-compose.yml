@@ -3,6 +3,7 @@ services:
   mysql:
      image: mysql
      build: ./data_model
+     container_name: countertax-db
      environment:
         MYSQL_ROOT_PASSWORD: administrator
         MYSQL_DATABASE: mydb
@@ -11,6 +12,7 @@ services:
      tty: true
   web:
      build: .
+     container_name: countertax-backend
      environment:
          - NODE_ENV=development
          - DB_HOST=mysql
