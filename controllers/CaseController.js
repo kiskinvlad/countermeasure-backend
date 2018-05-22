@@ -13,7 +13,7 @@ const sort_params = [
 ];
 
 const getFilter = async function(req, res){
-    console.log("get filter");
+
     let err, user, data;
     
     //get user
@@ -31,7 +31,7 @@ const getFilter = async function(req, res){
 
     let now = new Date();
 
-    switch(filter_param.id){
+    switch (filter_param.id) {
         case 1: // All
             break;
         case 2: // Updated in the last week

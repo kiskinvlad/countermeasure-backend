@@ -6,8 +6,6 @@ var User = require("./user");
 
 var env = process.env.NODE_ENV || "development";
 
-console.log(CONFIG.db_dialect)
-
 var sequelize = new Sequelize(CONFIG.db_name, CONFIG.db_user, CONFIG.db_password, {
     host: CONFIG.db_host,
     dialect: CONFIG.db_dialect,

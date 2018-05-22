@@ -7,7 +7,6 @@ module.exports = function(passport){
     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
     opts.secretOrKey = CONFIG.jwt_encryption;
 
-    console.log(CONFIG.jwt_encryption)
     passport.use(new JwtStrategy(opts, async function(jwt_payload, done){
         let err, user;
 
@@ -17,10 +16,10 @@ module.exports = function(passport){
             }
         }));
 
-        if(err) return done(err, false);
-        if(user) {
+        if (err) return done(err, false);
+        if (user) {
             return done(null, user);
-        }else{
+        } else {
             return done(null, false);
         }
     }));
