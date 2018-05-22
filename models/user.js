@@ -15,7 +15,7 @@ module.exports = (sequelize, Sequelize) => {
             notEmpty: true
         },
         role_id: {
-            type: Sequelize.STRING,
+            type: Sequelize.INTEGER,
             notEmpty: true
         },
         email: {
