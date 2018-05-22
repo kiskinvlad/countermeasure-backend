@@ -60,7 +60,12 @@ const login = async function(req, res){
     [err, user] = await to(authService.authUser(req.body));
     if (err) return ReE(res, err, 422);
 
-    return ReS(res, { token: user.getJWT(), user: user.toWeb() });
+    const authToken = user.getJWT();
+
+    const responseData = { token: authToken, user: user.toWeb() };
+    res.header('access-control-expose-headers', "Authorization")
+    res.header('Authorization', authToken);
+    return ReS(res, responseData, 200)
 }
 
 module.exports = {
