@@ -41,7 +41,7 @@ module.exports = (sequelize, Sequelize) => {
         timestamps: false
     });
 
-    User.associate = function(models) {
+    User.associate = function (models) {
         this.belongsTo(models.ORGANIZATION, {foreignKey: 'org_id', targetKey: 'org_id'});
     };
 
@@ -50,7 +50,7 @@ module.exports = (sequelize, Sequelize) => {
         if (user.changed('password')) {
             let salt, hash;
             [err, salt] = await to(bcrypt.genSalt(10));
-            if(err) TE(err.message, true);
+            if (err) TE(err.message, true);
 
             [err, hash] = await to(bcrypt.hash(user.password, salt));
             if(err) TE(err.message, true);
@@ -64,17 +64,17 @@ module.exports = (sequelize, Sequelize) => {
         if(!this.password) TE('password not set');
 
         //[err, pass] = await to(bcrypt_p.compare(pw, this.password));
-        if( pw === this.password) pass = pw;
-        if(err) TE(err);
+        if (pw === this.password) pass = pw;
+        if (err) TE(err);
 
-        if(!pass) TE('invalid password');
+        if (!pass) TE('invalid password');
 
         return this;
     }
 
     User.prototype.getJWT = function () {
         let expiration_time = parseInt(CONFIG.jwt_expiration);
-        return "Bearer "+jwt.sign({user_id:this.id}, CONFIG.jwt_encryption, {expiresIn: expiration_time});
+        return "Bearer " + jwt.sign({ userid: this.userid }, CONFIG.jwt_encryption, { expiresIn: expiration_time });
     };
 
     User.prototype.toWeb = function (pw) {

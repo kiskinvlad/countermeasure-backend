@@ -31,7 +31,7 @@ router.use(function(req, res, next) {
 
 router.use('/roles', roles);
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
