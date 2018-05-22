@@ -17,7 +17,7 @@ module.exports = (sequelize, Sequelize) => {
     });
 
     Role.associate = function(models) {
-        this.hasMany(models.USER_ROLE, {foreignKey: 'role_id', targetKey: 'role_id'});
+        this.hasMany(models.USER, {foreignKey: 'role_id', targetKey: 'role_id'});
     };
 
     Role.prototype.toWeb = function (pw) {
