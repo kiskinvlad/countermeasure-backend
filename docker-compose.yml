@@ -1,0 +1,26 @@
+version: '3.1'
+services:
+  mysql:
+     image: mysql
+     build: ./data_model
+     container_name: countertax-db
+     environment:
+        MYSQL_ROOT_PASSWORD: administrator
+        MYSQL_DATABASE: mydb
+        MYSQL_USER: admin
+        MYSQL_PASSWORD: administrator
+     tty: true
+  web:
+     build: .
+     container_name: countertax-backend
+     environment:
+         - NODE_ENV=development
+         - DB_HOST=mysql
+         - PORT=3000
+     links:
+      - mysql:mysql
+     depends_on:
+      - mysql
+     ports:
+      - 3000:3000
+     tty: true
