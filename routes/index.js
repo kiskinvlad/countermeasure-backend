@@ -6,8 +6,9 @@ var app = express();
 
 router.use(function(req, res, next) {
 
-    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['Authorization'] || req.headers['authorization'];
 
+    console.log(req.headers);
     if (token) {
 
         jwt.verify(token, app.get('secret'), function(err, decoded) {

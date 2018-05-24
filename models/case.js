@@ -27,11 +27,23 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: true
         },
-        updatedAt: {
+        updated_at: {
             type: Sequelize.DATE,
             allowNull: false,
             defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-        }
+        },
+        updated_by_name: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        updated_by_id: {
+            type: Sequelize.INTEGER,
+            allowNull: true,
+            references: {
+                model: 'USER',
+                key: 'userid'
+            }
+        },
     }, {
         freezeTableName: true,
         tableName: 'CASE',
