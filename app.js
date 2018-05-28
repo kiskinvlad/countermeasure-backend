@@ -5,11 +5,10 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+var cors = require('cors');
+var jwt = require('jsonwebtoken');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var rolesRouter = require('./routes/roles');
-var casesRouter = require('./routes/cases');
 
 var app = express();
 
@@ -35,18 +34,32 @@ app.use(passport.session());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(function (req, res, next) {
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type, Authorization, Content-Type');
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    // Pass to next layer of middleware
-    next();
+app.use(cors());
+app.use('/users', usersRouter);
+
+app.use(function(req, res, next) {
+
+    var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['Authorization'] || req.headers['authorization'];
+    token = token.split(' ')[1];
+    if (token) {
+        jwt.verify(token, app.get('secret'), function(err, decoded) {
+            if (err) {
+                console.log(err)
+
+                return res.json({ success: false, message: 'Failed to authenticate token.' });
+            } else {
+                req.decoded = decoded;
+                next();
+            }
+        });
+
+    } else {
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
+
+    }
 });
 
 //Sync Database
@@ -59,8 +72,6 @@ models.sequelize.sync().then(function() {
     console.log(err, "Something went wrong with the Database Update!")
 
 });
-app.use('/users', usersRouter);
-app.use('/cases', casesRouter);
 app.use('/', indexRouter);
 
 // catch 404 and forward to error handler

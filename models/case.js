@@ -49,5 +49,10 @@ module.exports = (sequelize, Sequelize) => {
         tableName: 'CASE',
         timestamps: false
     });
+
+    Case.associate = function(models) {
+        this.hasMany(models.DISPUTED_T1_TA, {foreignKey: 'case_id', targetKey: 'case_id'});
+    };
+
     return Case;
 };
