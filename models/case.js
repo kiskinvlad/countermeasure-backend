@@ -49,5 +49,10 @@ module.exports = (sequelize, Sequelize) => {
         tableName: 'CASE',
         timestamps: false
     });
+
+    Case.associate = function (models) {
+        this.belongsTo(models.ORGANIZATION, {foreignKey: 'org_id', targetKey: 'org_id'});
+    };
+
     return Case;
 };

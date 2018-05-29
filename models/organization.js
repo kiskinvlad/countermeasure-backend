@@ -42,13 +42,9 @@ module.exports = (sequelize, Sequelize) => {
     },
     {
         freezeTableName: true,
-        tableName: 'ORGANIZATION'
+        tableName: 'ORGANIZATION',
+        timestamps: false
     });
-
-    Organization.prototype.toWeb = function (pw) {
-        let json = this.toJSON();
-        return json;
-    };
 
     return Organization;
 };
