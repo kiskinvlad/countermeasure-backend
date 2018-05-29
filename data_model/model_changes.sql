@@ -18,7 +18,7 @@ ALTER TABLE `CASE` ADD CONSTRAINT `fk_CASE_USER_UPDATEDBY`
 
 ALTER TABLE CATEGORY ADD COLUMN order_position INT(11) DEFAULT NULL; 
 
--- Tuesday May 27, 2018  
+-- Tuesday May 29, 2018  
 -- Added by: Vlad Kiskin
 
 
