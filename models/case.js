@@ -1,6 +1,6 @@
 const bcrypt 			= require('bcrypt');
-const bcrypt_p 			= require('bcrypt-promise');
-const jwt           	= require('jsonwebtoken');
+const bcrypt_p 		= require('bcrypt-promise');
+const jwt         = require('jsonwebtoken');
 
 module.exports = (sequelize, Sequelize) => {
 
@@ -49,5 +49,13 @@ module.exports = (sequelize, Sequelize) => {
         tableName: 'CASE',
         timestamps: false
     });
+  
+    Case.associate = function(models) {
+        this.hasMany(models.DISPUTED_T1_TA, {foreignKey: 'case_id', targetKey: 'case_id'});
+    };
+    Case.associate = function (models) {
+        this.belongsTo(models.ORGANIZATION, {foreignKey: 'org_id', targetKey: 'org_id'});
+    };
+
     return Case;
 };

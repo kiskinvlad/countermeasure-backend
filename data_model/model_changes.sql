@@ -11,12 +11,20 @@ ALTER TABLE `CASE` ADD CONSTRAINT `fk_CASE_USER_UPDATEDBY`
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 
+
 -- Thrusday May 24, 2018  
 -- Added by: Vlad Kiskin
 ALTER TABLE CATEGORY ADD COLUMN order_position INT(11) DEFAULT NULL; 
+
 
 -- Thrusday May 24, 2018  
 -- Added by: Shannon Lui
 ALTER TABLE `USER` ADD COLUMN `first_name` VARCHAR(63) after `password`;
 ALTER TABLE `USER` ADD COLUMN `last_name` VARCHAR(63) after `first_name`;
 ALTER TABLE `USER` ADD COLUMN `phone` VARCHAR(15) after `last_name`;
+
+
+-- Tuesday May 29, 2018  
+-- Added by: Vlad Kiskin
+ALTER TABLE CATEGORY ADD COLUMN other_penalties DECIMAL(15,2) DEFAULT NULL; 
+

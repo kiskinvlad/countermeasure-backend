@@ -7,9 +7,8 @@ const custom = require('./../middleware/custom');
 require('./../middleware/passport')(passport);
 
 const CaseController = require('./../controllers/CaseController');
-
 //create case
-router.post('/',passport.authenticate('jwt', { session: false }), CaseController.getFilter);
+router.post('/',passport.authenticate('jwt', { session: false }), CaseController.createCase);
 //get case 
 router.get('/', passport.authenticate('jwt', { session:false}), CaseController.getFilter);
 //update case
