@@ -1,4 +1,6 @@
+const Sequelize = require("sequelize");
 const Case = require('../models').CASE;
+const Organization = require('../models').ORGANIZATION;
 
 const filter_params = [
     { id: 1, filter_string: "All" },
@@ -15,6 +17,7 @@ const sort_params = [
 const getFilter = async function(req, res) {
 
     try {
+        const Op = Sequelize.Op;
         let err, user, data;
     
         //get user
@@ -25,18 +28,33 @@ const getFilter = async function(req, res) {
         let filter_param = data.filter_param,
             sort_param = data.sort_param,
             page_number = data.page_number,
-            items_per_page = data.items_per_page;
+            items_per_page = data.items_per_page,
+            search_name = data.search_name;
     
         let filter_sql = { org_id: user.dataValues.org_id }, sort_sql;
-        console.log("getfilter params=", filter_param, sort_param, page_number, items_per_page);
-    
         let now = new Date();
+
+        if (search_name) {
+            if (!isNaN(search_name)) { // find by matter id
+                filter_sql.matter_id = {
+                    [Op.like]: '%' + search_name + '%'
+                }
+            } else { // find by sub name
+                console.log(search_name);
+                filter_sql.name = {
+                    [Op.like]: '%' + search_name + '%'
+                }
+            }
+        }
     
         switch (filter_param.id) {
             case 1: // All
                 break;
             case 2: // Updated in the last week
-                filter_sql.updated_at = { $gt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) };
+                filter_sql.updated_at = { 
+                    [Op.gte]: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+                    [Op.lt]: new Date()
+                };
                 break;
             default: //exception
                 break;
@@ -55,7 +73,7 @@ const getFilter = async function(req, res) {
             })
         );
     
-        if (err){
+        if (err) {
             return ReE(res, err);
         }
     
@@ -77,13 +95,40 @@ const getFilter = async function(req, res) {
     }
 }
 
-const getFilterParams = async function(req, res){
+const getFilterParams = async function(req, res) {
     return ReS(res, filter_params);
 }
 
-const getSortParams = async function(req, res){
+const getSortParams = async function(req, res) {
     return ReS(res, sort_params);
 }
+
+const createCase = async function(req, res) {
+
+    console.log("==========create case============");
+    try {
+        [err, org] = await to(
+            Organization.findOne({
+                where: {org_id: req.user.dataValues.org_id}, 
+            })
+        );
+        Case.sync().then(function() {
+            console.log(org);
+            return Case.create({
+                org_id: req.user.org_id,
+                matter_id: req.body.matter_id,
+                name: req.body.name,
+                description: req.body.description,
+                updated_by_name: req.user.name,
+                updated_by_id: req.user.userid
+            })
+        });
+    }
+    catch(err) {
+        return ReE(res, err);
+    }
+}
+
 module.exports = {
-    getFilter, getFilterParams, getSortParams
+    createCase, getFilter, getFilterParams, getSortParams
 }
