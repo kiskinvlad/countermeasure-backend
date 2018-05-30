@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-CONFIG = {};
+const CONFIG = {};
 
 CONFIG.app         = process.env.APP         || 'development';
 CONFIG.port        = process.env.PORT        || '3000';
@@ -14,3 +14,5 @@ CONFIG.db_password = process.env.DB_PASSWORD || 'administrator';
 
 CONFIG.jwt_encryption  = process.env.JWT_ENCRYPTION || 'encrypt';
 CONFIG.jwt_expiration  = process.env.JWT_EXPIRATION || '10000';
+
+module.exports.CONFIG = CONFIG;

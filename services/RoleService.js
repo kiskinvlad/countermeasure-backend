@@ -6,14 +6,16 @@ const getRole = async function(role_id){
 
     if(!role_id) TE('Need id for role');
 
-    let role;
-    [err, role] = await to(Role.findOne({where:{role_id:role_id}}));
-    console.log(err, role, role_id);
+    let role, err, where;
+    where = {role_id:role_id};
+    [err, role] = await to(Role.findOne({
+        where: where
+    }));
+
     if(err) TE(err.message);
 
     if(!role) TE('Role not exist');
 
     return role;
-
-}
+};
 module.exports.getRole = getRole;
