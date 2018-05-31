@@ -1,6 +1,9 @@
 const Sequelize = require("sequelize");
 const Case = require('../models').CASE;
-const Organization = require('../models').ORGANIZATION;
+const Category = require('../models').CATEGORY;
+const Scenario = require('../models').SCENARIO;
+const Disputed_t1_ta = require('../models').DISPUTED_T1_TA;
+const CaseService = require('./../services/CaseService');
 
 const filter_params = [
     { id: 1, filter_string: "All" },
@@ -18,77 +21,26 @@ const getFilter = async function(req, res) {
 
     try {
         const Op = Sequelize.Op;
-        let err, user, data;
-    
-        //get user
-        user = req.user;
-    
-        //get filter_param, sort_param, page_number(start from 1), items_per_page from body
-        data = req.body;
-        let filter_param = data.filter_param,
-            sort_param = data.sort_param,
-            page_number = data.page_number,
-            items_per_page = data.items_per_page,
-            search_name = data.search_name;
-    
-        let filter_sql = { org_id: user.dataValues.org_id }, sort_sql;
-        let now = new Date();
-
-        if (search_name) {
-            if (!isNaN(search_name)) { // find by matter id
-                filter_sql.matter_id = {
-                    [Op.like]: '%' + search_name + '%'
-                }
-            } else { // find by sub name
-                console.log(search_name);
-                filter_sql.name = {
-                    [Op.like]: '%' + search_name + '%'
-                }
-            }
-        }
-    
-        switch (filter_param.id) {
-            case 1: // All
-                break;
-            case 2: // Updated in the last week
-                filter_sql.updated_at = { 
-                    [Op.gte]: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
-                    [Op.lt]: new Date()
-                };
-                break;
-            default: //exception
-                break;
-        }
-        
-        //sorting query
-        sort_sql = [[sort_param.field, 'DESC']]; 
-    
-        // find all by pagination
-        [err, cases] = await to(
-            Case.findAll({
-                limit: items_per_page, 
-                offset: items_per_page * (page_number - 1), 
-                where: filter_sql, 
-                order: sort_sql
-            })
-        );
-    
-        if (err) {
-            return ReE(res, err);
-        }
+        let err;
     
         // get total count matching criteria
         [err, totalCount] = await to(
             Case.count({
-                where: filter_sql
+                where: CaseService.getFilterSql(req)
             })
         );
-    
-        if (err){
+        if (err) {
             return ReE(res, err);
         }
-        console.log("pagenumber=", page_number);
-        return ReS(res, {page_number, items_per_page, totalCount, cases});
+
+        [err, cases] = await to(
+            CaseService.getAllCases(req, res)
+        );
+        if (err) {
+            return ReE(res, err);
+        }
+
+        return ReS(res, {page_number: req.body.page_number, items_per_page: req.body.items_per_page, totalCount, cases, role_id: req.user.role_id});       
     } 
     catch(err) {
         return ReE(res, err);
@@ -105,24 +57,128 @@ const getSortParams = async function(req, res) {
 
 const createCase = async function(req, res) {
 
-    console.log("==========create case============");
     try {
-        [err, org] = await to(
-            Organization.findOne({
-                where: {org_id: req.user.dataValues.org_id}, 
-            })
-        );
-        Case.sync().then(function() {
-            console.log(org);
-            return Case.create({
+        await to(
+            Case.create({
                 org_id: req.user.org_id,
                 matter_id: req.body.matter_id,
                 name: req.body.name,
                 description: req.body.description,
-                updated_by_name: req.user.name,
+                updated_by_name: req.user.first_name + ' ' + req.user.last_name,
                 updated_by_id: req.user.userid
             })
-        });
+        );
+        
+        // get total count matching criteria
+        [err, totalCount] = await to(
+            Case.count({
+                where: CaseService.getFilterSql(req)
+            })
+        );
+        if (err) {
+            return ReE(res, err);
+        }
+
+        [err, cases] = await to(
+            CaseService.getAllCases(req, res)
+        );
+        if (err) {
+            return ReE(res, err);
+        }
+
+        return ReS(res, {page_number: req.body.page_number, items_per_page: req.body.items_per_page, totalCount, cases, role_id: req.user.role_id});        
+    }
+    catch(err) {
+        return ReE(res, err);
+    }
+}
+
+const getCase = async function(req, res) {
+    const case_id = req.query.case_id;
+    [err, data] = await to(
+        Case.findOne({
+            where: {case_id: case_id}
+        })
+    );
+    if (err) {
+        return ReE(res, err);
+    }
+
+    return ReS(res, {matter_id: data.matter_id, name: data.name, description: data.description});
+}
+
+const updateCase = async function(req, res) {
+    const case_id = req.body.case_id;
+    [err, data] = await to(
+        Case.update({
+            matter_id: req.body.matter_id,
+            name: req.body.name,
+            description: req.body.description }, {
+            where: {case_id: case_id}
+        })
+    );
+    if (err) {
+        return ReE(res, err);
+    }
+
+    [err, data] = await to(
+        Case.findOne({
+            where: {case_id: case_id}
+        })
+    );
+    if (err) {
+        return ReE(res, err);
+    }
+
+    return ReS(res, {matter_id: data.matter_id, name: data.name, description: data.description});
+}
+
+const deleteCase = async function(req, res) {
+    try {
+        const case_id = req.body.case_id;
+        await to(
+            Scenario.delete({
+                where: {case_id: case_id}
+            })
+        );
+        await to(
+            Category.destroy({
+                where: {case_id: case_id}
+            })
+        );
+        await to(
+            Disputed_t1_ta.destroy({
+                where: {case_id: case_id}
+            })
+        );
+        [err, data] = await to(
+            Case.destroy({
+                where: {case_id: case_id}
+            })
+        );
+
+        if (err) {
+            return ReE(res, err);
+        }
+
+        // get total count matching criteria
+        [err, totalCount] = await to(
+            Case.count({
+                where: CaseService.getFilterSql(req)
+            })
+        );
+        if (err) {
+            return ReE(res, err);
+        }
+
+        [err, cases] = await to(
+            CaseService.getAllCases(req, res)
+        );
+        if (err) {
+            return ReE(res, err);
+        }
+
+        return ReS(res, {page_number: req.body.page_number, items_per_page: req.body.items_per_page, totalCount, cases, role_id: req.user.role_id});  
     }
     catch(err) {
         return ReE(res, err);
@@ -130,5 +186,5 @@ const createCase = async function(req, res) {
 }
 
 module.exports = {
-    createCase, getFilter, getFilterParams, getSortParams
+    createCase, getCase, updateCase, deleteCase, getFilter, getFilterParams, getSortParams
 }
