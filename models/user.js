@@ -32,12 +32,36 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: false
         },
+        first_name: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        last_name: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        phone: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
         create_time: {
             type: Sequelize.DATE,
             allowNull: false
         },
         enabled: {
             type: Sequelize.INTEGER
+        },
+        first_name: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        last_name: {
+            type: Sequelize.STRING,
+            allowNull: true
+        },
+        phone: {
+            type: Sequelize.STRING,
+            allowNull: true
         }
     }, {
         freezeTableName: true,

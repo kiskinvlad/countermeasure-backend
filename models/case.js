@@ -1,7 +1,3 @@
-const bcrypt 			= require('bcrypt');
-const bcrypt_p 		= require('bcrypt-promise');
-const jwt         = require('jsonwebtoken');
-
 module.exports = (sequelize, Sequelize) => {
 
     var Case = sequelize.define('CASE', {

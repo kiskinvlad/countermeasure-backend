@@ -38,9 +38,10 @@ const update = async function (req, res) {
     if (err) {
         if (err.message === 'Validation error')
             err = 'The email address or phone number is already in use';
-        return ReE(res, err);
+        return ReE(res, err, 400);
     }
-    return ReS(res, {message :'Updated User: ' + user.email});
+  
+    return ReS(res, {message :'Updated User: ' + user.email, user:user.toWeb()});
 };
 
 const remove = async function(req, res) {
