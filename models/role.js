@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
 
-    var Role = sequelize.define('USER_ROLE', {
+    const Role = sequelize.define('USER_ROLE', {
         role_id: {
             autoIncrement: true,
             primaryKey: true,
@@ -20,9 +20,8 @@ module.exports = (sequelize, Sequelize) => {
         this.hasMany(models.USER, {foreignKey: 'role_id', targetKey: 'role_id'});
     };
 
-    Role.prototype.toWeb = function (pw) {
-        let json = this.toJSON();
-        return json;
+    Role.prototype.toWeb = function () {
+        return this.toJSON();
     };
 
     return Role;

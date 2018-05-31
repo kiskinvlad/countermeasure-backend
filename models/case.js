@@ -49,6 +49,7 @@ module.exports = (sequelize, Sequelize) => {
     Case.associate = function(models) {
         this.hasMany(models.DISPUTED_T1_TA, {foreignKey: 'case_id', targetKey: 'case_id'});
     };
+
     Case.associate = function (models) {
         this.belongsTo(models.ORGANIZATION, {foreignKey: 'org_id', targetKey: 'org_id'});
     };

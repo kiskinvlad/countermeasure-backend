@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
 
-    var Disputed_t1_ta = sequelize.define('DISPUTED_T1_TA', {
+    const Disputed_t1_ta = sequelize.define('DISPUTED_T1_TA', {
         disputed_t1_ta_id: {
             autoIncrement: true,
             primaryKey: true,
@@ -288,9 +288,8 @@ module.exports = (sequelize, Sequelize) => {
         this.hasOne(models.CATEGORY, {foreignKey: 'disputed_t1_ta_id', targetKey: 'disputed_t1_ta_id'});
     };
 
-    Disputed_t1_ta.prototype.toWeb = function (pw) {
-        let json = this.toJSON();
-        return json;
+    Disputed_t1_ta.prototype.toWeb = function () {
+        return this.toJSON();
     };
 
     return Disputed_t1_ta;

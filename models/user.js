@@ -1,10 +1,14 @@
-const bcrypt 			= require('bcrypt');
-const bcrypt_p 			= require('bcrypt-promise');
-const jwt           	= require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const bcrypt_p = require('bcrypt-promise');
+const jwt = require('jsonwebtoken');
+const CONFIG = require('../config/config').CONFIG;
+const to = require('../utils').to;
+const TE = require('../utils').TE;
+
 
 module.exports = (sequelize, Sequelize) => {
 
-    var User = sequelize.define('USER', {
+    const User = sequelize.define('USER', {
         userid: {
             autoIncrement: true,
             primaryKey: true,
@@ -22,7 +26,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: true,
             unique: true,
-            validate: { isEmail: {msg: "Email invalid."} }
+            validate: { isEmail: {msg: 'Email invalid.'} }
         },
         password: {
             type: Sequelize.STRING,
@@ -69,7 +73,7 @@ module.exports = (sequelize, Sequelize) => {
         this.belongsTo(models.ORGANIZATION, {foreignKey: 'org_id', targetKey: 'org_id'});
     };
 
-    User.beforeSave(async (user, options) => {
+    User.beforeSave(async (user) => {
         let err;
         if (user.changed('password')) {
             let salt, hash;
@@ -94,16 +98,15 @@ module.exports = (sequelize, Sequelize) => {
         if (!pass) TE('invalid password');
 
         return this;
-    }
+    };
 
     User.prototype.getJWT = function () {
         let expiration_time = parseInt(CONFIG.jwt_expiration);
-        return "Bearer " + jwt.sign({ userid: this.userid }, CONFIG.jwt_encryption, { expiresIn: expiration_time });
+        return 'Bearer ' + jwt.sign({ userid: this.userid }, CONFIG.jwt_encryption, { expiresIn: expiration_time });
     };
 
-    User.prototype.toWeb = function (pw) {
-        let json = this.toJSON();
-        return json;
+    User.prototype.toWeb = function () {
+        return this.toJSON();
     };
 
     return User;

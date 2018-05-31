@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
 
-    var Organization = sequelize.define('ORGANIZATION', {
+    return sequelize.define('ORGANIZATION', {
         org_id: {
             autoIncrement: true,
             primaryKey: true,
@@ -22,15 +22,15 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             allowNull: true,
             unique: true,
-            validate: { len: {args: [7, 20], msg: "Phone number invalid, too short."},
-                isNumeric: { msg: "not a valid phone number."}
+            validate: { len: {args: [7, 20], msg: 'Phone number invalid, too short.'},
+                isNumeric: { msg: 'not a valid phone number.'}
             }
         },
         email: {
             type: Sequelize.STRING,
             allowNull: true,
             unique: true,
-            validate: { isEmail: {msg: "Email invalid."} }
+            validate: { isEmail: {msg: 'Email invalid.'} }
         },
         create_time: {
             type: Sequelize.DATE,
@@ -45,6 +45,4 @@ module.exports = (sequelize, Sequelize) => {
         tableName: 'ORGANIZATION',
         timestamps: false
     });
-
-    return Organization;
 };
