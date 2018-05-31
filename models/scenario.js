@@ -45,7 +45,7 @@ module.exports = (sequelize, Sequelize) => {
         }
     }, {
         freezeTableName: true,
-        tableName: 'SCENARIIO',
+        tableName: 'SCENARIO',
         timestamps: false
     });
 
