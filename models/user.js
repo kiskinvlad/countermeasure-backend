@@ -50,18 +50,6 @@ module.exports = (sequelize, Sequelize) => {
         },
         enabled: {
             type: Sequelize.INTEGER
-        },
-        first_name: {
-            type: Sequelize.STRING,
-            allowNull: true
-        },
-        last_name: {
-            type: Sequelize.STRING,
-            allowNull: true
-        },
-        phone: {
-            type: Sequelize.STRING,
-            allowNull: true
         }
     }, {
         freezeTableName: true,
