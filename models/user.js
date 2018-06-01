@@ -71,7 +71,8 @@ module.exports = (sequelize, Sequelize) => {
             [err, hash] = await to(bcrypt.hash(user.password, salt));
             if(err) TE(err.message, true);
 
-            user.password = hash;
+            // Uncoment below when passwords require hashing
+            // user.password = hash;
         }
     });
 

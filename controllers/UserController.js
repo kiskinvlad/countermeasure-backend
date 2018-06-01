@@ -32,6 +32,7 @@ const update = async function (req, res) {
     let err, user, data;
     user = req.user;
     data = req.body;
+    delete data.password; // Password should not be set by this route
     user.set(data);
 
     [err, user] = await to(user.save());
@@ -40,8 +41,31 @@ const update = async function (req, res) {
             err = 'The email address or phone number is already in use';
         return ReE(res, err, 400);
     }
-  
-    return ReS(res, {message :'Updated User: ' + user.email, user:user.toWeb()});
+
+    return ReS(res, {message: 'Updated User: ' + user.email, user:user.toWeb()});
+};
+
+const updatePassword = async function (req, res) {
+    let err, user, old_password, new_password;
+    user = req.user;
+    old_password = req.body.old_password;
+    new_password = req.body.new_password;
+
+    [err, user] = await to(user.comparePassword(old_password));
+    if (err) {
+        return ReE(res, err, 409);
+    }
+
+    [err, data] = await to(
+      user.update({
+        password: new_password
+      })
+    );
+    if (err) {
+        return ReE(res, err, 400);
+    }
+
+    return ReS(res, {message: 'Updated password for user: ' + user.email});
 };
 
 const remove = async function(req, res) {
@@ -70,5 +94,5 @@ const login = async function(req, res){
 };
 
 module.exports = {
-    create, get, update, remove, login
+    create, get, update, remove, login, updatePassword
 };
