@@ -2,8 +2,6 @@
 const CategoryService = require('./../services/CategoryService');
 const DisputedService = require('./../services/DisputedService');
 const jsonexport = require('jsonexport');
-const path = require('path');
-const fs = require('fs');
 
 const Category = require('../models').CATEGORY;
 const ReE = require('../utils').ReE;
