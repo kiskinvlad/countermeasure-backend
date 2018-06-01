@@ -27,7 +27,7 @@ module.exports = (sequelize, Sequelize) => {
             notEmpty: true
         },
         income_subject_to_gnp: {
-            type: Sequelize.DECIMAL(15,2).ZEROFILL.UNSIGNED,
+            type: Sequelize.DECIMAL(15,2),
             notEmpty: true
         },
         other_amounts_payable: {
