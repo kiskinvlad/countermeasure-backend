@@ -28,3 +28,6 @@ ALTER TABLE `USER` ADD COLUMN `phone` VARCHAR(15) after `last_name`;
 -- Added by: Vlad Kiskin
 ALTER TABLE CATEGORY ADD COLUMN other_penalties DECIMAL(15,2) DEFAULT NULL; 
 
+-- Thrusday June 4, 2018  
+-- Added by: Vlad Kiskin
+ALTER TABLE SCENARIO ADD COLUMN order_position INT(11) DEFAULT NULL; 
