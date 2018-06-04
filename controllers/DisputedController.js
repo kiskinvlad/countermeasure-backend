@@ -13,6 +13,16 @@ const getDisputed = async function(req, res){
 };
 module.exports.getDisputed = getDisputed;
 
+const getDisputesByCase = async function(req, res){
+    const case_id = req.query.case_id;
+    let err, disputes;
+    [err, disputes] = await to(disputedService.getDisputesByCase(case_id));
+    if(err) return ReE(res, err, 422);
+
+    return ReS(res, {disputes: disputes});
+};
+module.exports.getDisputesByCase = getDisputesByCase;
+
 const getDisputes = async function(req, res){
     let err, disputes, disputesArray;
     [err, disputes] = await to(disputedService.getDisputes());
@@ -22,3 +32,47 @@ const getDisputes = async function(req, res){
 };
 module.exports.getDisputes = getDisputes;
 
+const createDisputed = async function(req, res){
+    try {
+        console.log("========");
+        console.log(req.body.case_id);
+        let err, disputes;
+        await to(disputedService.createDisputed(req.body));
+
+        [err, disputes] = await to(disputedService.getDisputesByCase(req.body.case_id));
+        if(err) return ReE(res, err, 422);
+        console.log(disputes);
+        
+        return ReS(res, {disputes: JSON.parse(JSON.stringify(disputes))});
+    }
+    catch(err) {
+        return ReE(res, err);
+    }
+};
+module.exports.createDisputed = createDisputed;
+
+const updateDisputed = async function(req, res){
+    let err, disputes, disputesArray;
+    [err, disputes] = await to(disputedService.getDisputes());
+    if(err) return ReE(res, err, 422);
+    disputesArray = JSON.parse(JSON.stringify(disputes));
+    return ReS(res, {disputes: disputesArray});
+};
+module.exports.updateDisputed = updateDisputed;
+
+const removeDisputed = async function(req, res){
+    let err;
+    try {
+        await to(disputedService.removeDisputed(req.body));
+        if(err) return ReE(res, err, 422);
+
+        [err, disputes] = await to(disputedService.getDisputesByCase(req.body.case_id));
+        if(err) return ReE(res, err, 422);
+        
+        return ReS(res, {disputes: disputes});
+    }
+    catch(err) {
+        return ReE(res, err);
+    }
+};
+module.exports.removeDisputed = removeDisputed;
