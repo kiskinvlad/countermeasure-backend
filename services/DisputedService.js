@@ -33,3 +33,47 @@ const getDisputes = async function(){
     return disputes;
 };
 module.exports.getDisputes = getDisputes;
+
+const createDisputed = async function(body){
+    let err, disputed;
+    console.log("create");
+    console.log(body);
+    [err, disputed] = await to(
+        Disputed.create({
+            case_id: body.case_id,
+            ...body.disputed
+        })
+    );
+
+    if (err) {
+        TE("Can't created a disputed");
+    }
+
+    return disputed;
+};
+module.exports.createDisputed = createDisputed;
+
+const removeDisputed = async function(body){
+    let err;
+    await to(
+        Disputed.destroy({
+            where: {disputed_t1_ta_id: body.disputed_id}
+        })
+    );
+
+    if (err) {
+        TE("Can't remove a disputed");
+    }
+
+    return true;
+};
+module.exports.removeDisputed = removeDisputed;
+
+const getDisputesByCase = async function(case_id){
+    let disputes, err;
+    [err, disputes] = await to(Disputed.findAll({where: {case_id: case_id}}));
+    if(err) TE(err.message);
+    if(!disputes) TE('Disputes not exist');
+    return disputes;
+};
+module.exports.getDisputesByCase = getDisputesByCase;
