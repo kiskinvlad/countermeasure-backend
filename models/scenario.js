@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
 
-    var Scenario = sequelize.define('SCENARIO', {
+    const Scenario = sequelize.define('SCENARIO', {
         scenario_id: {
             autoIncrement: true,
             primaryKey: true,
@@ -42,12 +42,24 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.DECIMAL(15,2),
             notEmpty: true,
             defaultValue: 0.00
+        },
+        order_position: {
+            type: Sequelize.INTEGER,
+            defaultValue: 1
         }
     }, {
         freezeTableName: true,
         tableName: 'SCENARIO',
         timestamps: false
     });
+
+    Scenario.associate = function(models) {
+        this.hasOne(models.CASE, {foreignKey: 'case_id', targetKey: 'case_id'});
+    };
+
+    Scenario.prototype.toWeb = function () {
+        return this.toJSON();
+    };
 
     return Scenario;
 };

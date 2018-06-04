@@ -218,6 +218,7 @@ CREATE TABLE `SCENARIO` (
   `taxes` decimal(15,2) NOT NULL DEFAULT '0.00',
   `penalties` decimal(15,2) NOT NULL DEFAULT '0.00',
   `interest` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `order_position` INT(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`scenario_id`),
   KEY `fk_SCENARIO_CASE1_idx` (`case_id`),
   CONSTRAINT `fk_SCENARIO_CASE1` FOREIGN KEY (`case_id`) REFERENCES `case` (`case_id`)
@@ -227,7 +228,7 @@ CREATE TABLE `SCENARIO` (
 --  Records of `SCENARIO`
 -- ----------------------------
 BEGIN;
-INSERT INTO `SCENARIO` VALUES ('1', '1', 'Scenario A', '123.349', 'Scenario A', '38.00', '10.00', '100.00', '7.00'), ('2', '2', 'Scenario A', '1.2304', 'Scenario A', '38.00', '9.00', '50.00', '4.00'), ('3', '3', 'Scenario B', '4.423', 'Scenario B', '38.00', '2.00', '30.00', '7.00'), ('4', '4', 'Scenario C', '61.234', 'description ddd', '38.00', '8.00', '20.00', '4.00');
+INSERT INTO `SCENARIO` VALUES ('1', '1', 'Scenario A', '123.349', 'Scenario A', '38.00', '10.00', '100.00', '7.00', '1'), ('2', '2', 'Scenario A', '1.2304', 'Scenario A', '38.00', '9.00', '50.00', '4.00', '2'), ('3', '3', 'Scenario B', '4.423', 'Scenario B', '38.00', '2.00', '30.00', '7.00', '3'), ('4', '4', 'Scenario C', '61.234', 'description ddd', '38.00', '8.00', '20.00', '4.00', '4');
 COMMIT;
 
 -- ----------------------------
