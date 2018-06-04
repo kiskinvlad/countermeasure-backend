@@ -21,9 +21,6 @@ const create = async function(req, res) {
     if(!body.description) {
         return ReE(res, 'Description value is not exist', 422);
     }
-    if(!body.taxable_income) {
-        return ReE(res, 'Taxable income value is not exist', 422);
-    }
     if(!body.taxes) {
         return ReE(res, 'Taxes value is not exist', 422);
     }
@@ -113,7 +110,7 @@ const deleteScenarioForList = async function(req, res) {
 const get = async function(req, res) {
     const scenario_id = req.query.scenario_id;
     let scenario, err;
-    [err, scenario] = await to(scenario_id.getScenario(scenario_id));
+    [err, scenario] = await to(ScenarioService.getScenario(scenario_id));
     if (err) return ReE(res, err, 422);
     return ReS(res, {message: 'Successfully get scenario.', scenario: scenario.toWeb()}, 200);
 };
@@ -137,9 +134,6 @@ const update = async function (req, res) {
     if(!body.description) {
         return ReE(res, 'Description value is not exist', 422);
     }
-    if(!body.taxable_income) {
-        return ReE(res, 'Taxable income value is not exist', 422);
-    }
     if(!body.taxes) {
         return ReE(res, 'Taxes value is not exist', 422);
     }
@@ -153,7 +147,7 @@ const update = async function (req, res) {
         let err, scenario;
         [err, scenario] = await to(ScenarioService.update(body));
         if (err) return ReE(res, err, 422);
-        return ReS(res, {message: 'Successfully update scenario.', category: scenario.toWeb()}, 201);
+        return ReS(res, {message: 'Successfully update scenario.', scenario: scenario.toWeb()}, 201);
     }
 };
 

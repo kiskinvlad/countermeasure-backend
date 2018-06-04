@@ -54,11 +54,12 @@ CREATE TABLE `CATEGORY` (
   `disputed_t1_ta_id` int(11) DEFAULT NULL,
   `name` varchar(63) NOT NULL,
   `taxable_income` decimal(15,2) NOT NULL DEFAULT '0.00',
-  `income_subject_to_gnp` decimal(15,2) unsigned zerofill NOT NULL DEFAULT '0000000000000.00',
+  `income_subject_to_gnp` decimal(15,2) NOT NULL DEFAULT '0.00',
   `other_amounts_payable` decimal(15,2) NOT NULL DEFAULT '0.00',
   `credits_applied_on_filing` decimal(15,2) NOT NULL DEFAULT '0.00',
   `federal_non_refundable_tax_credits` decimal(15,2) NOT NULL DEFAULT '0.00',
   `provincial_non_refundable_tax_credits` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `other_penalties` decimal(15,2) NOT NULL DEFAULT '0.00'
   `order_position` int(11) DEFAULT NULL,
   PRIMARY KEY (`category_id`),
   KEY `fk_CATEGORIES_CASE1_idx` (`case_id`),
