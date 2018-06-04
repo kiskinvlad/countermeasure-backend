@@ -14,7 +14,7 @@
  Date: 05/31/2018 10:57:05 AM
 */
 
-SET NAMES utf8mb4;
+SET NAMES utf8;
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- ----------------------------
