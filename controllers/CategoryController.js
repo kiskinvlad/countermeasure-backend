@@ -190,20 +190,6 @@ const remove = async function(req, res) {
     return ReS(res, { message: 'Successfully delete category.' }, 204);
 };
 
-const createCvs = async function (req, res) {
-
-    const json_data = req.body;
-    jsonexport(json_data, function(err, csv){
-        if(err) return ReE( res, err, 422 );
-        res.set({
-            'Content-Length': csv.size,
-            'Content-Disposition': 'attachment; filename=out.csv',
-            'Content-Type': 'text/csv'
-        });
-        res.send(csv);
-    });
-};
-
 module.exports = {
-    get, update, create, remove, getAllForCase, moveCategory, deleteCategoryForList, createCvs
+    get, update, create, remove, getAllForCase, moveCategory, deleteCategoryForList
 };

@@ -59,13 +59,16 @@ const getAllForCase = async function(req, res) {
         page_number = data.page_number,
         items_per_page = data.items_per_page;
     let filter_sql = { case_id: case_id }, sort_sql;
-    sort_sql = [[sort_param.field]];
+    if(sort_param) {
+        sort_sql = [[sort_param.field]];
+    }
     [err, sceneries] = await to(ScenarioService.getSceneries(
         items_per_page,
         items_per_page * (page_number - 1),
         filter_sql,
         sort_sql)
     );
+
     if(err) return ReE(res, err, 422);
     sceneriesArray = JSON.parse(JSON.stringify(sceneries));
     [err, totalCount] = await to(
@@ -73,6 +76,7 @@ const getAllForCase = async function(req, res) {
             where: filter_sql
         })
     );
+
     return ReS(res, {page_number, items_per_page, totalCount, sceneries: sceneriesArray});
 };
 
