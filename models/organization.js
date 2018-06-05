@@ -38,6 +38,9 @@ module.exports = (sequelize, Sequelize) => {
         },
         enabled: {
             type: Sequelize.INTEGER
+        },
+        member_limit: {
+            type: Sequelize.INTEGER
         }
     },
     {

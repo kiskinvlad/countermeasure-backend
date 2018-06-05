@@ -13,6 +13,7 @@ require('./../middleware/passport')(passport);
 
 router.post('/', UserController.create);
 router.get('/', passport.authenticate('jwt', {session:false}), UserController.get);
+router.get('/all', passport.authenticate('jwt', {session:false}), UserController.getAll);
 router.put('/', passport.authenticate('jwt', {session:false}), UserController.update);
 router.delete('/', passport.authenticate('jwt', {session:false}), UserController.remove);
 router.post('/login', UserController.login);
