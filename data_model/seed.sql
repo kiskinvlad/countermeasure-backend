@@ -59,7 +59,7 @@ CREATE TABLE `CATEGORY` (
   `credits_applied_on_filing` decimal(15,2) NOT NULL DEFAULT '0.00',
   `federal_non_refundable_tax_credits` decimal(15,2) NOT NULL DEFAULT '0.00',
   `provincial_non_refundable_tax_credits` decimal(15,2) NOT NULL DEFAULT '0.00',
-  `other_penalties` decimal(15,2) NOT NULL DEFAULT '0.00'
+  `other_penalties` decimal(15,2) NOT NULL DEFAULT '0.00',
   `order_position` int(11) DEFAULT NULL,
   PRIMARY KEY (`category_id`),
   KEY `fk_CATEGORIES_CASE1_idx` (`case_id`),
