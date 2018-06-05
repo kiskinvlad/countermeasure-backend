@@ -46,12 +46,31 @@ const createDisputed = async function(body){
     );
 
     if (err) {
-        TE("Can't created a disputed");
+        TE("Can't create a disputed");
     }
 
     return disputed;
 };
 module.exports.createDisputed = createDisputed;
+
+const updateDisputed = async function(body){
+    console.log(body);
+    let err, disputed;
+    [err, disputed] = await to(
+        Disputed.update({
+            case_id: body.case_id,
+            ...body.disputed}, {
+            where: {disputed_t1_ta_id: body.disputed.disputed_t1_ta_id}
+        })
+    );
+
+    if (err) {
+        TE("Can't update a disputed");
+    }
+
+    return disputed;
+};
+module.exports.updateDisputed = updateDisputed;
 
 const removeDisputed = async function(body){
     let err;
