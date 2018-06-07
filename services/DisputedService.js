@@ -36,8 +36,6 @@ module.exports.getDisputes = getDisputes;
 
 const createDisputed = async function(body){
     let err, disputed;
-    console.log("create");
-    console.log(body);
     [err, disputed] = await to(
         Disputed.create({
             case_id: body.case_id,
@@ -54,7 +52,6 @@ const createDisputed = async function(body){
 module.exports.createDisputed = createDisputed;
 
 const updateDisputed = async function(body){
-    console.log(body);
     let err, disputed;
     [err, disputed] = await to(
         Disputed.update({
@@ -96,3 +93,47 @@ const getDisputesByCase = async function(case_id){
     return disputes;
 };
 module.exports.getDisputesByCase = getDisputesByCase;
+
+const getDisputesBySummary = async function(case_id){
+    
+    let disputes = [], err, res = [];
+    [err, disputes] = await to(Disputed.findAll({
+        where: {case_id: case_id},
+        order: [['taxpayer', 'ASC']]
+    }));
+
+    if(err) TE(err.message);
+    if(!disputes) TE('Disputes not exist');
+
+    let arr = [];
+    for (let i = 0; i < disputes.length; i ++) {
+        if (!arr.length) {
+            arr.push(disputes[i]);
+        } else if (disputes[i].taxpayer == disputes[i-1].taxpayer) {
+            arr.push(disputes[i]);
+        } else {
+            res.push(arr);
+            arr = [];
+            arr.push(disputes[i]);
+        }
+    }
+    res.push(arr);
+    res.push(disputes);
+
+    for (let i = 0; i < res.length; i ++) {
+        let tmp = res[i];
+        let total = {DIFF_taxable_income: 0, DIFF_balance_before_penalties_and_interest: 0, DIFF_taxable_income: 0, DIFF_total_tax_and_penalties: 0, 
+            DIFF_balance_before_penalties_and_interest: 0, DIFF_estimated_interest: 0, DIFF_total_debt: 0};
+        for (let j = 0; j < tmp.length; j ++) {
+            total.DIFF_taxable_income = 0 - -total.DIFF_taxable_income - -tmp[j].DIFF_taxable_income;
+            total.DIFF_total_tax_and_penalties = 0 - -total.DIFF_total_tax_and_penalties - -tmp[j].DIFF_total_tax_and_penalties;
+            total.DIFF_balance_before_penalties_and_interest = 0 - -total.DIFF_balance_before_penalties_and_interest - -tmp[j].DIFF_balance_before_penalties_and_interest;
+            total.DIFF_estimated_interest = 0 - -total.DIFF_estimated_interest - -tmp[j].DIFF_estimated_interest;
+            total.DIFF_total_debt = 0 - -total.DIFF_total_debt - -tmp[j].DIFF_total_debt;
+            console.log(total.DIFF_total_debt);
+        }
+        res[i].push(total);
+    }
+    return res;
+};
+module.exports.getDisputesBySummary = getDisputesBySummary;
