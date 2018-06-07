@@ -36,8 +36,6 @@ module.exports.getDisputes = getDisputes;
 
 const createDisputed = async function(body){
     let err, disputed;
-    console.log("create");
-    console.log(body);
     [err, disputed] = await to(
         Disputed.create({
             case_id: body.case_id,
@@ -54,7 +52,6 @@ const createDisputed = async function(body){
 module.exports.createDisputed = createDisputed;
 
 const updateDisputed = async function(body){
-    console.log(body);
     let err, disputed;
     [err, disputed] = await to(
         Disputed.update({
@@ -105,8 +102,6 @@ const getDisputesBySummary = async function(case_id){
         order: [['taxpayer', 'ASC']]
     }));
 
-    // console.log("===================");
-    // console.log(disputes)
     if(err) TE(err.message);
     if(!disputes) TE('Disputes not exist');
 
@@ -117,7 +112,6 @@ const getDisputesBySummary = async function(case_id){
         } else if (disputes[i].taxpayer == disputes[i-1].taxpayer) {
             arr.push(disputes[i]);
         } else {
-            console.log(disputes[i-1].taxpayer);
             res.push(arr);
             arr = [];
             arr.push(disputes[i]);
@@ -130,15 +124,6 @@ const getDisputesBySummary = async function(case_id){
         let tmp = res[i];
         let total = {DIFF_taxable_income: 0, DIFF_balance_before_penalties_and_interest: 0, DIFF_taxable_income: 0, DIFF_total_tax_and_penalties: 0, 
             DIFF_balance_before_penalties_and_interest: 0, DIFF_estimated_interest: 0, DIFF_total_debt: 0};
-        console.log('====================');
-        // console.log(totoal.DIFF_total_debt);
-        // {{tax.year}}</td>
-        //   <td>{{tax.province}}</td>
-        //   <td>{{tax.DIFF_taxable_income}}</td>
-        //   <td>{{tax.DIFF_balance_before_penalties_and_interest | number: '3.2'}}</td>
-        //   <td>{{tax.DIFF_total_tax_and_penalties - tax.DIFF_balance_before_penalties_and_interest}}</td>
-        //   <td>{{tax.DIFF_estimated_interest}}</td>
-        //   <td>{{tax.DIFF_total_debt}}</td>
         for (let j = 0; j < tmp.length; j ++) {
             total.DIFF_taxable_income = 0 - -total.DIFF_taxable_income - -tmp[j].DIFF_taxable_income;
             total.DIFF_total_tax_and_penalties = 0 - -total.DIFF_total_tax_and_penalties - -tmp[j].DIFF_total_tax_and_penalties;
@@ -148,11 +133,7 @@ const getDisputesBySummary = async function(case_id){
             console.log(total.DIFF_total_debt);
         }
         res[i].push(total);
-        console.log(total.DIFF_total_debt);
     }
-
-    console.log(res);
-    // console.log(disputes);
     return res;
 };
 module.exports.getDisputesBySummary = getDisputesBySummary;
