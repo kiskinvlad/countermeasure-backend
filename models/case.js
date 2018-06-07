@@ -37,7 +37,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: true,
             references: {
                 model: 'USER',
-                key: 'userid'
+                key: 'user_id'
             }
         },
     }, {

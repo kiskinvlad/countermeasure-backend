@@ -9,7 +9,7 @@ const TE = require('../utils').TE;
 module.exports = (sequelize, Sequelize) => {
 
     const User = sequelize.define('USER', {
-        userid: {
+        user_id: {
             autoIncrement: true,
             primaryKey: true,
             type: Sequelize.INTEGER
@@ -46,7 +46,8 @@ module.exports = (sequelize, Sequelize) => {
         },
         create_time: {
             type: Sequelize.DATE,
-            allowNull: false
+            allowNull: false,
+            defaultValue: Sequelize.NOW
         },
         enabled: {
             type: Sequelize.INTEGER
@@ -91,7 +92,7 @@ module.exports = (sequelize, Sequelize) => {
 
     User.prototype.getJWT = function () {
         let expiration_time = parseInt(CONFIG.jwt_expiration);
-        return 'Bearer ' + jwt.sign({ userid: this.userid }, CONFIG.jwt_encryption, { expiresIn: expiration_time });
+        return 'Bearer ' + jwt.sign({ user_id: this.user_id }, CONFIG.jwt_encryption, { expiresIn: expiration_time });
     };
 
     User.prototype.toWeb = function () {

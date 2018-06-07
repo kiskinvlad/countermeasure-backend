@@ -22,7 +22,7 @@ const getFilter = async function(req, res) {
     try {
         const Op = Sequelize.Op;
         let err;
-    
+
         // get total count matching criteria
         [err, totalCount] = await to(
             Case.count({
@@ -40,8 +40,8 @@ const getFilter = async function(req, res) {
             return ReE(res, err);
         }
 
-        return ReS(res, {page_number: req.body.page_number, items_per_page: req.body.items_per_page, totalCount, cases, role_id: req.user.role_id});       
-    } 
+        return ReS(res, {page_number: req.body.page_number, items_per_page: req.body.items_per_page, totalCount, cases, role_id: req.user.role_id});
+    }
     catch(err) {
         return ReE(res, err);
     }
@@ -65,10 +65,10 @@ const createCase = async function(req, res) {
                 name: req.body.name,
                 description: req.body.description,
                 updated_by_name: req.user.first_name + ' ' + req.user.last_name,
-                updated_by_id: req.user.userid
+                updated_by_id: req.user.user_id
             })
         );
-        
+
         // get total count matching criteria
         [err, totalCount] = await to(
             Case.count({
@@ -86,7 +86,7 @@ const createCase = async function(req, res) {
             return ReE(res, err);
         }
 
-        return ReS(res, {page_number: req.body.page_number, items_per_page: req.body.items_per_page, totalCount, cases, role_id: req.user.role_id});        
+        return ReS(res, {page_number: req.body.page_number, items_per_page: req.body.items_per_page, totalCount, cases, role_id: req.user.role_id});
     }
     catch(err) {
         return ReE(res, err);
@@ -178,7 +178,7 @@ const deleteCase = async function(req, res) {
             return ReE(res, err);
         }
 
-        return ReS(res, {page_number: req.body.page_number, items_per_page: req.body.items_per_page, totalCount, cases, role_id: req.user.role_id});  
+        return ReS(res, {page_number: req.body.page_number, items_per_page: req.body.items_per_page, totalCount, cases, role_id: req.user.role_id});
     }
     catch(err) {
         return ReE(res, err);

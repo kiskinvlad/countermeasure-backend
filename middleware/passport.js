@@ -13,7 +13,7 @@ module.exports = function(passport){
 
         [err, user] = await to(User.find({
             where: { 
-                userid: jwt_payload.userid
+                user_id: jwt_payload.user_id
             }
         }));
 
