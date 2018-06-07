@@ -5,6 +5,7 @@ const category = require('./categories');
 const disputes = require('./disputes');
 const scenario = require('./scenaries');
 const organizations = require('./organizations');
+const csv = require('./csv');
 const router = express.Router();
 
 router.use('/roles', roles);
@@ -13,6 +14,8 @@ router.use('/category', category);
 router.use('/disputes', disputes);
 router.use('/scenario', scenario);
 router.use('/organizations', organizations);
+router.use('/csv', csv);
+
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
