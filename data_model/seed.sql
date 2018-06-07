@@ -172,6 +172,7 @@ CREATE TABLE `ORGANIZATION` (
   `email` varchar(127) DEFAULT NULL,
   `enabled` tinyint(1) DEFAULT NULL,
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `member_limit` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`org_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
@@ -179,7 +180,7 @@ CREATE TABLE `ORGANIZATION` (
 --  Records of `ORGANIZATION`
 -- ----------------------------
 BEGIN;
-INSERT INTO `ORGANIZATION` VALUES ('1', 'kiskinLTD', 'vlad', 'kiskin', '+123456789000', 'kiskinvlad@gmail.com', '1', '2018-05-17 18:51:52'), ('2', 'phOrg', 'Jean', 'Philippe', '+123456789000', 'phorg@gmail.com', '1', '2018-05-17 18:51:52'), ('3', 'shOrg', 'Alex', 'Frankel', '+123456789000', 'alexf@gmail.com', '3', '2018-05-17 18:51:52'), ('4', 'jamesOrg', 'James', 'Rodriguez', '+123456789000', 'james@gmail.com', '2', '2018-05-17 18:51:52');
+INSERT INTO `ORGANIZATION` VALUES ('1', 'kiskinLTD', 'vlad', 'kiskin', '+123456789000', 'kiskinvlad@gmail.com', '1', '2018-05-17 18:51:52', 10), ('2', 'phOrg', 'Jean', 'Philippe', '+123456789000', 'phorg@gmail.com', '1', '2018-05-17 18:51:52', 10), ('3', 'shOrg', 'Alex', 'Frankel', '+123456789000', 'alexf@gmail.com', '3', '2018-05-17 18:51:52', 10), ('4', 'jamesOrg', 'James', 'Rodriguez', '+123456789000', 'james@gmail.com', '2', '2018-05-17 18:51:52', 10);
 COMMIT;
 
 -- ----------------------------

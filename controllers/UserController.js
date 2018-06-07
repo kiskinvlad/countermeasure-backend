@@ -2,6 +2,10 @@ const authService = require('./../services/AuthService');
 const ReE = require('../utils').ReE;
 const ReS = require('../utils').ReS;
 const to = require('../utils').to;
+const User = require('../models').USER;
+const Organization = require('../models').ORGANIZATION;
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op
 
 const create = async function(req, res){
     res.setHeader ( 'Content-Type', 'application/json' );
@@ -26,6 +30,57 @@ const get = async function (req, res) {
     let user = req.user;
 
     return ReS(res, {user:user.toWeb()});
+};
+
+const getAll = async function (req, res) {
+    let err, data, ret, where, final;
+    const user = req.user;
+    const org_id = req.query.org_id;
+    const offset = isNaN(parseInt(req.query.offset)) ? null : parseInt(req.query.offset);
+    const limit = isNaN(parseInt(req.query.limit)) ? null : parseInt(req.query.limit);
+
+    if (!(user.role_id === 'CA' || (user.role_id === 'OA' && user.org_id == org_id))) {
+      ret = ReS(res, {error: 'Unauthorized access.'}, 401);
+    } else {
+      // Build WHERE clause
+      where = {};
+      if (req.query.type === 'member') {
+        where.role_id = {[Op.ne]: 'OG'};
+      } else if (req.query.type === 'guest') {
+        where.role_id = 'OG';
+      }
+      if (org_id) {
+        where.org_id = org_id;
+      }
+
+      // Get all users and count
+      [err, data] = await to(
+          User.findAndCountAll({
+             where: where,
+             offset: offset,
+             limit: limit
+          })
+      );
+
+      if (err) {
+        ret = ReE(res, err);
+      } else {
+        final =  {count: data.count, users: data.rows};
+        if (req.query.type === 'member') {
+          // Get total number of enabled users
+          where.enabled = 1;
+          [err, data] = await to(
+            User.count({ where: where })
+          );
+          if (!err) {
+            final.total_enabled = data;
+          }
+        }
+        ret = ReS(res, final);
+      }
+    }
+
+    return ret;
 };
 
 const update = async function (req, res) {
@@ -94,5 +149,5 @@ const login = async function(req, res){
 };
 
 module.exports = {
-    create, get, update, remove, login, updatePassword
+    create, get, update, remove, login, updatePassword, getAll
 };
