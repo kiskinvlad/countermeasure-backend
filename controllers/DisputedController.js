@@ -23,6 +23,16 @@ const getDisputesByCase = async function(req, res){
 };
 module.exports.getDisputesByCase = getDisputesByCase;
 
+const getDisputesBySummary = async function(req, res){
+    const case_id = req.query.case_id;
+    let err, disputes;
+    [err, disputes] = await to(disputedService.getDisputesBySummary(case_id));
+    if(err) return ReE(res, err, 422);
+
+    return ReS(res, {disputes: disputes});
+};
+module.exports.getDisputesBySummary = getDisputesBySummary;
+
 const getDisputes = async function(req, res){
     let err, disputes, disputesArray;
     [err, disputes] = await to(disputedService.getDisputes());
