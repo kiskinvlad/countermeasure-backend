@@ -99,16 +99,16 @@ const getDisputesBySummary = async function(case_id){
     let disputes = [], err, res = [];
     [err, disputes] = await to(Disputed.findAll({
         where: {case_id: case_id},
-        attributes: [
-            'taxpayer',
-            'year',
-            'province',
-            'DIFF_taxable_income',
-            'DIFF_total_tax_and_penalties',
-            'DIFF_balance_before_penalties_and_interest',
-            'DIFF_estimated_interest',
-            'DIFF_total_debt'
-        ],
+        // attributes: [
+        //     'taxpayer',
+        //     'year',
+        //     'province',
+        //     'DIFF_taxable_income',
+        //     'DIFF_total_tax_and_penalties',
+        //     'DIFF_balance_before_penalties_and_interest',
+        //     'DIFF_estimated_interest',
+        //     'DIFF_total_debt'
+        // ],
         order: [['taxpayer', 'ASC']]
     }));
 
