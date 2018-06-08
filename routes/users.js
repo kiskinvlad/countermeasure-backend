@@ -11,9 +11,10 @@ require('./../middleware/passport')(passport);
 //   res.send('respond with a resource');
 // });
 
-router.post('/', UserController.create);
-router.get('/', passport.authenticate('jwt', {session:false}), UserController.get);
-router.get('/all', passport.authenticate('jwt', {session:false}), UserController.getAll);
+router.post('/', passport.authenticate('jwt', {session:false}), UserController.create);
+router.get('/:id', passport.authenticate('jwt', {session:false}), UserController.getUserByID);
+router.get('/', passport.authenticate('jwt', {session:false}), UserController.getAll);
+router.put('/:id', passport.authenticate('jwt', {session:false}), UserController.updateUserByID);
 router.put('/', passport.authenticate('jwt', {session:false}), UserController.update);
 router.delete('/', passport.authenticate('jwt', {session:false}), UserController.remove);
 router.post('/login', UserController.login);

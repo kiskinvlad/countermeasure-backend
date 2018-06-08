@@ -34,7 +34,7 @@ CREATE TABLE `CASE` (
   KEY `fk_CASE_ORGANIZATION1_idx` (`org_id`),
   KEY `fk_CASE_USER_UPDATEDBY` (`updated_by_id`),
   CONSTRAINT `fk_CASE_ORGANIZATION1` FOREIGN KEY (`org_id`) REFERENCES `organization` (`org_id`),
-  CONSTRAINT `fk_CASE_USER_UPDATEDBY` FOREIGN KEY (`updated_by_id`) REFERENCES `USER` (`userid`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_CASE_USER_UPDATEDBY` FOREIGN KEY (`updated_by_id`) REFERENCES `USER` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -165,6 +165,7 @@ CREATE TABLE `ORGANIZATION` (
   `email` varchar(127) DEFAULT NULL,
   `enabled` tinyint(1) DEFAULT NULL,
   `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `member_limit` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`org_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
@@ -172,7 +173,7 @@ CREATE TABLE `ORGANIZATION` (
 --  Records of `ORGANIZATION`
 -- ----------------------------
 BEGIN;
-INSERT INTO `ORGANIZATION` VALUES ('1', 'kiskinLTD', 'vlad', 'kiskin', '+123456789000', 'kiskinvlad@gmail.com', '1', '2018-05-17 18:51:52'), ('2', 'phOrg', 'Jean', 'Philippe', '+123456789000', 'phorg@gmail.com', '1', '2018-05-17 18:51:52'), ('3', 'shOrg', 'Alex', 'Frankel', '+123456789000', 'alexf@gmail.com', '3', '2018-05-17 18:51:52'), ('4', 'jamesOrg', 'James', 'Rodriguez', '+123456789000', 'james@gmail.com', '2', '2018-05-17 18:51:52');
+INSERT INTO `ORGANIZATION` VALUES ('1', 'kiskinLTD', 'vlad', 'kiskin', '+123456789000', 'kiskinvlad@gmail.com', '1', '2018-05-17 18:51:52', 10), ('2', 'phOrg', 'Jean', 'Philippe', '+123456789000', 'phorg@gmail.com', '1', '2018-05-17 18:51:52', 10), ('3', 'shOrg', 'Alex', 'Frankel', '+123456789000', 'alexf@gmail.com', '3', '2018-05-17 18:51:52', 10), ('4', 'jamesOrg', 'James', 'Rodriguez', '+123456789000', 'james@gmail.com', '2', '2018-05-17 18:51:52', 10);
 COMMIT;
 
 -- ----------------------------
@@ -188,7 +189,7 @@ CREATE TABLE `ORGANIZATION_GUEST_PERMISSIONS` (
   KEY `fk_ORGANIZATION_GUESTS_CASE1_idx` (`case_id`),
   CONSTRAINT `fk_ORGANIZATION_GUESTS_CASE1` FOREIGN KEY (`case_id`) REFERENCES `case` (`case_id`),
   CONSTRAINT `fk_ORGANIZATION_GUESTS_ORGANIZATION1` FOREIGN KEY (`org_id`) REFERENCES `organization` (`org_id`),
-  CONSTRAINT `fk_ORGANIZATION_GUESTS_USER1` FOREIGN KEY (`user_id`) REFERENCES `user` (`userid`)
+  CONSTRAINT `fk_ORGANIZATION_GUESTS_USER1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -230,7 +231,7 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `USER`;
 CREATE TABLE `USER` (
-  `userid` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `org_id` int(11) NOT NULL,
   `role_id` varchar(2) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
@@ -240,7 +241,7 @@ CREATE TABLE `USER` (
   `first_name` varchar(45) NOT NULL,
   `last_name` varchar(45) NOT NULL,
   `phone` varchar(15) DEFAULT NULL,
-  PRIMARY KEY (`userid`),
+  PRIMARY KEY (`user_id`),
   UNIQUE KEY `email_UNIQUE` (`email`),
   KEY `fk_USER_ORGANIZATION_idx` (`org_id`),
   KEY `fk_USER_USER_ROLE1_idx` (`role_id`),

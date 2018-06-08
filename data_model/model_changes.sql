@@ -35,3 +35,7 @@ ALTER TABLE SCENARIO ADD COLUMN order_position INT(11) DEFAULT NULL;
 -- Tuesday June 5, 2018
 -- Added by: Shannon Lui
 ALTER TABLE ORGANIZATION ADD COLUMN member_limit INT(11) NOT NULL DEFAULT 0;
+
+-- Tuesday June 7, 2018
+-- Added by: Shannon Lui
+ALTER TABLE `USER` CHANGE `userid` `user_id` int(11) NOT NULL AUTO_INCREMENT;
