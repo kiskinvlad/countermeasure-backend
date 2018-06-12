@@ -39,6 +39,9 @@ app.use('/users', usersRouter);
 app.use(function(req, res, next) {
 
     let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['Authorization'] || req.headers['authorization'];
+    if (!token)  {
+        return;
+    }
     token = token.split(' ')[1];
     if (token) {
         jwt.verify(token, app.get('secret'), function(err, decoded) {
