@@ -34,13 +34,15 @@ module.exports = (sequelize, Sequelize) => {
         },
         create_time: {
             type: Sequelize.DATE,
-            allowNull: false
+            allowNull: false,
+            defaultValue: Sequelize.NOW
         },
         enabled: {
             type: Sequelize.INTEGER
         },
         member_limit: {
-            type: Sequelize.INTEGER
+            type: Sequelize.INTEGER,
+            allowNull: false
         }
     },
     {
