@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const UserController = require('./../controllers/UserController');
+const PermissionController = require('./../controllers/PermissionController');
 
 const passport = require('passport');
 require('./../middleware/passport')(passport);
@@ -19,5 +20,7 @@ router.put('/', passport.authenticate('jwt', {session:false}), UserController.up
 router.delete('/', passport.authenticate('jwt', {session:false}), UserController.remove);
 router.post('/login', UserController.login);
 router.patch('/password', passport.authenticate('jwt', {session:false}), UserController.updatePassword);
+router.post('/:id/permissions', passport.authenticate('jwt', {session:false}), PermissionController.bulkCreate);
+router.delete('/:id/permissions', passport.authenticate('jwt', {session:false}), PermissionController.bulkRemove);
 
 module.exports = router;
