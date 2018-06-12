@@ -12,7 +12,8 @@ const create = async function(req, res){
     const body = req.body;
     const requestor = req.user;
 
-    if (requestor.role_id !== 'CA' && (requestor.role_id !== 'OA' || requestor.org_id != body.org_id)) {
+    if (requestor.role_id !== 'CA' && (requestor.role_id !== 'OA' || requestor.org_id != body.org_id
+          || body.role_id === 'CA')) {
       err = 'Unauthorized access.';
       ret = ReE(res, err, 401);
     }
@@ -25,7 +26,7 @@ const create = async function(req, res){
       ret = ReE(res, err, 400);
     }
     // Check if number of enabled users is under member_limit
-    if (!err && body.enabled > 0) {
+    if (!err && body.enabled > 0 && (body.role_id === 'OA' || body.role_id === 'OM')) {
         [err, isUnder] = await to(isUnderMemberLimit(requestor.org_id));
         if (err) {
           ret = ReE(res, err, 400);
@@ -71,6 +72,13 @@ const getAll = async function (req, res) {
         where.role_id = {[Op.ne]: 'OG'};
       } else if (req.query.type === 'guest') {
         where.role_id = 'OG';
+        if (parseInt(req.query.enabled) === 1 || parseInt(req.query.enabled) === 0) {
+          where.enabled = req.query.enabled;
+        }
+        if (req.query.email) where.email = req.query.email;
+        if (req.query.name) {
+          where[Op.or]={first_name:{[Op.like]: `%${req.query.name}%`},last_name:{[Op.like]: `%${req.query.name}%`}};
+        }
       }
       if (org_id) {
         where.org_id = org_id;
@@ -195,7 +203,8 @@ const updateUserByID = async function (req, res) {
     }
 
     // Check if number of enabled users is under member_limit
-    if (!err && user.enabled == 0 && body.enabled > 0) {
+    if (!err && user.enabled == 0 && body.enabled > 0
+            && (user.role_id === 'OA' || user.role_id === 'OM')) {
         [err, isUnder] = await to(isUnderMemberLimit(user.org_id));
         if (err) {
           ret = ReE(res, err, 400);
