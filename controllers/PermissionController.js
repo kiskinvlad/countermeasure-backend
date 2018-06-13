@@ -123,6 +123,7 @@ async function getCasePermissions(res, user_id, org_id, offset, limit, params) {
     let search = '%' + params.search + '%';
     query += ' AND (C.`matter_id` LIKE :search OR C.`name` LIKE :search)';
     replacements.search = search;
+    where[Op.or]={matter_id: {[Op.like]: search}, name:{[Op.like]: search}};
   }
   if (params.sort_by) {
     switch(params.sort_by) {
