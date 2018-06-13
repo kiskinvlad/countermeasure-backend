@@ -52,7 +52,6 @@ const getAllForCase = async function(req, res) {
      * @param {{filter_param:object}} filter_param
      * @param {{sort_param:object}} sort_param
      */
-    console.log(req.body);
     const case_id = req.body.case_id || req.body.filter_param.id;
     const data = req.body;
     let err, sceneries, sceneriesArray;
