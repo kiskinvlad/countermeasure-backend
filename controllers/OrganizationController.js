@@ -121,6 +121,7 @@ const updateOrg = async function (req, res) {
   let ret, user, org;
   user = req.user;
   org = req.body;
+  let fields = ['org_name', 'first_name', 'last_name', 'phone', 'email'];
 
   if (!(user.role_id === 'CA' || (user.role_id === 'OA' && user.org_id == org_id))) {
     ret = ReS(res, {error: 'Unauthorized access.'}, 401);
@@ -131,17 +132,15 @@ const updateOrg = async function (req, res) {
     if (org.phone === "") {
         org.phone = null;
     }
+    if (user.role_id === 'CA') {
+      fields.push('enabled');
+      fields.push('member_limit');
+    }
     // Update organization
     [err, data] = await to(
-        Organization.update({
-            org_name: org.org_name,
-            first_name: org.first_name,
-            last_name: org.last_name,
-            phone: org.phone,
-            email: org.email,
-            enabled: org.enabled }, {
-            where: {org_id: org_id}
-        })
+        Organization.update(org,
+          {where: {org_id: org_id}, fields: fields}
+        )
     );
     if (err) {
       ret = ReE(res, err);
