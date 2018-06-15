@@ -33,7 +33,7 @@ CREATE TABLE `CASE` (
   PRIMARY KEY (`case_id`),
   KEY `fk_CASE_ORGANIZATION1_idx` (`org_id`),
   KEY `fk_CASE_USER_UPDATEDBY` (`updated_by_id`),
-  CONSTRAINT `fk_CASE_ORGANIZATION1` FOREIGN KEY (`org_id`) REFERENCES `organization` (`org_id`),
+  CONSTRAINT `fk_CASE_ORGANIZATION1` FOREIGN KEY (`org_id`) REFERENCES `ORGANIZATION` (`org_id`),
   CONSTRAINT `fk_CASE_USER_UPDATEDBY` FOREIGN KEY (`updated_by_id`) REFERENCES `USER` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8;
 
@@ -63,7 +63,7 @@ CREATE TABLE `CATEGORY` (
   `order_position` int(11) DEFAULT NULL,
   PRIMARY KEY (`category_id`),
   KEY `fk_CATEGORIES_CASE1_idx` (`case_id`),
-  CONSTRAINT `fk_CATEGORIES_CASE1` FOREIGN KEY (`case_id`) REFERENCES `case` (`case_id`)
+  CONSTRAINT `fk_CATEGORIES_CASE1` FOREIGN KEY (`case_id`) REFERENCES `CASE` (`case_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -142,7 +142,7 @@ CREATE TABLE `DISPUTED_T1_TA` (
   `DIFF_total_debt` decimal(15,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`disputed_t1_ta_id`),
   KEY `fk_TAXES_CASE1_idx` (`case_id`),
-  CONSTRAINT `fk_TAXES_CASE1` FOREIGN KEY (`case_id`) REFERENCES `case` (`case_id`)
+  CONSTRAINT `fk_TAXES_CASE1` FOREIGN KEY (`case_id`) REFERENCES `CASE` (`case_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -187,9 +187,9 @@ CREATE TABLE `ORGANIZATION_GUEST_PERMISSIONS` (
   PRIMARY KEY (`org_id`,`user_id`,`case_id`),
   KEY `fk_ORGANIZATION_GUESTS_USER1_idx` (`user_id`),
   KEY `fk_ORGANIZATION_GUESTS_CASE1_idx` (`case_id`),
-  CONSTRAINT `fk_ORGANIZATION_GUESTS_CASE1` FOREIGN KEY (`case_id`) REFERENCES `case` (`case_id`),
-  CONSTRAINT `fk_ORGANIZATION_GUESTS_ORGANIZATION1` FOREIGN KEY (`org_id`) REFERENCES `organization` (`org_id`),
-  CONSTRAINT `fk_ORGANIZATION_GUESTS_USER1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
+  CONSTRAINT `fk_ORGANIZATION_GUESTS_CASE1` FOREIGN KEY (`case_id`) REFERENCES `CASE` (`case_id`),
+  CONSTRAINT `fk_ORGANIZATION_GUESTS_ORGANIZATION1` FOREIGN KEY (`org_id`) REFERENCES `ORGANIZATION` (`org_id`),
+  CONSTRAINT `fk_ORGANIZATION_GUESTS_USER1` FOREIGN KEY (`user_id`) REFERENCES `USER` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -216,7 +216,7 @@ CREATE TABLE `SCENARIO` (
   `order_position` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`scenario_id`),
   KEY `fk_SCENARIO_CASE1_idx` (`case_id`),
-  CONSTRAINT `fk_SCENARIO_CASE1` FOREIGN KEY (`case_id`) REFERENCES `case` (`case_id`)
+  CONSTRAINT `fk_SCENARIO_CASE1` FOREIGN KEY (`case_id`) REFERENCES `CASE` (`case_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
@@ -245,8 +245,8 @@ CREATE TABLE `USER` (
   UNIQUE KEY `email_UNIQUE` (`email`),
   KEY `fk_USER_ORGANIZATION_idx` (`org_id`),
   KEY `fk_USER_USER_ROLE1_idx` (`role_id`),
-  CONSTRAINT `fk_USER_ORGANIZATION` FOREIGN KEY (`org_id`) REFERENCES `organization` (`org_id`),
-  CONSTRAINT `fk_USER_USER_ROLE1` FOREIGN KEY (`role_id`) REFERENCES `user_role` (`role_id`)
+  CONSTRAINT `fk_USER_ORGANIZATION` FOREIGN KEY (`org_id`) REFERENCES `ORGANIZATION` (`org_id`),
+  CONSTRAINT `fk_USER_USER_ROLE1` FOREIGN KEY (`role_id`) REFERENCES `USER_ROLE` (`role_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
