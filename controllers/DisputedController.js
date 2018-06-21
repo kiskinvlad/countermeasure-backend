@@ -9,7 +9,7 @@ const getDisputed = async function(req, res){
     [err, disputed] = await to(disputedService.getDisputed(disputed_t1_ta_id));
     if(err) return ReE(res, err, 422);
 
-    return ReS(res, {disputed: disputed.toWeb()});
+    return ReS(res, {disputed: disputed});
 };
 module.exports.getDisputed = getDisputed;
 
@@ -45,7 +45,8 @@ module.exports.getDisputes = getDisputes;
 const createDisputed = async function(req, res){
     try {
         let err, disputes;
-        await to(disputedService.createDisputed(req.body));
+        [err, disputes] = await to(disputedService.createDisputed(req.body));
+        if(err) return ReE(res, err, 422);
 
         [err, disputes] = await to(disputedService.getDisputesByCase(req.body.case_id));
         if(err) return ReE(res, err, 422);
@@ -77,7 +78,7 @@ module.exports.updateDisputed = updateDisputed;
 const removeDisputed = async function(req, res){
     let err;
     try {
-        await to(disputedService.removeDisputed(req.body));
+        [err, disputes] = await to(disputedService.removeDisputed(req.body));
         if(err) return ReE(res, err, 422);
 
         [err, disputes] = await to(disputedService.getDisputesByCase(req.body.case_id));

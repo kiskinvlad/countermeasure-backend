@@ -50,9 +50,5 @@ module.exports = (sequelize, Sequelize) => {
         this.hasMany(models.DISPUTED_T1_TA, {foreignKey: 'case_id', targetKey: 'case_id'});
     };
 
-    Case.associate = function (models) {
-        this.belongsTo(models.ORGANIZATION, {foreignKey: 'org_id', targetKey: 'org_id'});
-    };
-
     return Case;
 };
