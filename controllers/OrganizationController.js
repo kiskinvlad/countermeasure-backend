@@ -99,10 +99,10 @@ const getOrgStats = async function(req, res){
 
 const getOrgByID = async function (req, res) {
   const org_id = req.params.id;
-  let ret;
+  let ret, org;
   let user = req.user;
 
-  if (!(user.role_id === 'CA' || (user.role_id === 'OA' && user.org_id == org_id))) {
+  if (user.role_id !== 'CA' && user.org_id != org_id) {
     ret = ReS(res, {error: 'Unauthorized access.'}, 401);
   } else {
     [err, data] = await to(
@@ -110,7 +110,19 @@ const getOrgByID = async function (req, res) {
         where: {org_id: org_id}
       })
     );
-    ret = (err) ? ReE(res, err) : ReS(res, {organization: data});
+    if (err) {
+      ret = ReE(res, err);
+    } else {
+      if (user.role_id === 'OA' || user.role_id === 'CA') {
+        org = {organization: data};
+      } else {
+        org = {organization: {
+            org_id: data.org_id,
+            org_name: data.org_name
+        }};
+      }
+      ret = ReS(res, org);
+    }
   }
 
   return ret;
