@@ -7,7 +7,7 @@ require('./../middleware/passport')(passport);
 const DisputedController = require('./../controllers/DisputedController');
 
 //get all disputes
-router.get('/',passport.authenticate('jwt', { session: false }), DisputedController.getDisputes);
+router.get('/',passport.authenticate('jwt', { session: false }), DisputedController.getDisputed);
 //get disputes by case
 router.get('/case',passport.authenticate('jwt', { session: false }), DisputedController.getDisputesByCase);
 //get disputes by summary

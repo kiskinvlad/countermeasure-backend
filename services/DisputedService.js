@@ -2,14 +2,16 @@ const Disputed = require('../models').DISPUTED_T1_TA;
 const TE = require('../utils').TE;
 const to = require('../utils').to;
 
-const getDisputed = async function(disputed_t1_ta_id){
+const getDisputed = async function(querydisputed_t1_ta_id){
     let disputed_info = {};
     disputed_info.status = 'get disputed';
 
     if(!disputed_t1_ta_id) TE('Need category id for disputed');
 
     let disputed, err, where;
-    where = {disputed_t1_ta_id: disputed_t1_ta_id};
+    where = {
+        disputed_t1_ta_id: disputed_t1_ta_id
+    };
     [err, disputed] = await to(Disputed.findOne({
         where: where,
         raw: true
@@ -36,6 +38,7 @@ module.exports.getDisputes = getDisputes;
 
 const createDisputed = async function(body){
     let err, disputed;
+    delete body.disputed['case_id'];
     [err, disputed] = await to(
         Disputed.create({
             case_id: body.case_id,
@@ -43,9 +46,8 @@ const createDisputed = async function(body){
         })
     );
 
-    if (err) {
-        TE("Can't create a disputed");
-    }
+    if (err) TE(err.message)
+    if (!disputed) TE("Can't create a disputed")
 
     return disputed;
 };
@@ -119,7 +121,7 @@ const getDisputesBySummary = async function(case_id){
     for (let i = 0; i < disputes.length; i ++) {
         if (!arr.length) {
             arr.push(disputes[i]);
-        } else if (disputes[i].taxpayer == disputes[i-1].taxpayer) {
+        } else if (disputes[i].taxpayer === disputes[i-1].taxpayer) {
             arr.push(disputes[i]);
         } else {
             res.push(arr);

@@ -1,6 +1,6 @@
 module.exports = (sequelize, Sequelize) => {
 
-    return sequelize.define('ORGANIZATION', {
+    Organization = sequelize.define('ORGANIZATION', {
         org_id: {
             autoIncrement: true,
             primaryKey: true,
@@ -50,4 +50,10 @@ module.exports = (sequelize, Sequelize) => {
         tableName: 'ORGANIZATION',
         timestamps: false
     });
+
+    Organization.associate = function(models) {
+        this.hasMany(models.CASE, {foreignKey: 'org_id', targetKey: 'org_id'});
+    };
+
+    return Organization;
 };

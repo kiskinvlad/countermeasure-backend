@@ -3,6 +3,7 @@ const Case = require('../models').CASE;
 const Category = require('../models').CATEGORY;
 const Scenario = require('../models').SCENARIO;
 const Disputed_t1_ta = require('../models').DISPUTED_T1_TA;
+const Organization_guest_permissions = require('../models').ORGANIZATION_GUEST_PERMISSIONS;
 const CaseService = require('./../services/CaseService');
 
 const filter_params = [
@@ -137,7 +138,7 @@ const deleteCase = async function(req, res) {
     try {
         const case_id = req.body.case_id;
         await to(
-            Scenario.delete({
+            Scenario.destroy({
                 where: {case_id: case_id}
             })
         );
@@ -151,6 +152,12 @@ const deleteCase = async function(req, res) {
                 where: {case_id: case_id}
             })
         );
+        await to(
+            Organization_guest_permissions.destroy({
+                where: {case_id: case_id}
+            })
+        );
+        
         [err, data] = await to(
             Case.destroy({
                 where: {case_id: case_id}
