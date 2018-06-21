@@ -2,7 +2,7 @@ const Disputed = require('../models').DISPUTED_T1_TA;
 const TE = require('../utils').TE;
 const to = require('../utils').to;
 
-const getDisputed = async function(querydisputed_t1_ta_id){
+const getDisputed = async function(disputed_t1_ta_id){
     let disputed_info = {};
     disputed_info.status = 'get disputed';
 
