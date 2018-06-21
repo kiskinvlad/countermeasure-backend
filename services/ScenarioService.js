@@ -2,22 +2,22 @@ const Scenario = require('../models').SCENARIO;
 const TE = require('../utils').TE;
 const to = require('../utils').to;
 
-const getSceneries = async function(limit, offset, where, order){
-    let sceneries_info = {};
-    sceneries_info.status = 'get sceneries';
+const getScenarios = async function(limit, offset, where, order){
+    let scenarios_info = {};
+    scenarios_info.status = 'get scenarios';
     if(!where.case_id) TE('Needs case id');
-    let sceneries, err;
-    [err, sceneries] = await to(Scenario.findAll({
+    let scenarios, err;
+    [err, scenarios] = await to(Scenario.findAll({
         limit: limit || null,
         offset: offset || null,
         where: where,
         order: order || null
     }));
     if(err) TE(err.message);
-    if(!sceneries) TE('Cannot find sceneries');
-    return sceneries;
+    if(!scenarios) TE('Cannot find scenarios');
+    return scenarios;
 };
-module.exports.getSceneries = getSceneries;
+module.exports.getScenarios = getScenarios;
 
 const getLastScenario = async function() {
     let scenario, err;
@@ -30,9 +30,9 @@ const getLastScenario = async function() {
 };
 module.exports.getLastScenario = getLastScenario;
 
-const moveSceneries = async function(firstScenario, secondScenario){
-    let sceneries_info = {};
-    sceneries_info.status = 'move sceneries';
+const moveScenarios = async function(firstScenario, secondScenario){
+    let scenarios_info = {};
+    scenarios_info.status = 'move scenarios';
 
     if(!firstScenario.id) TE('Needs first scenario id');
     if(!secondScenario.id) TE('Needs second scenario id');
@@ -46,7 +46,7 @@ const moveSceneries = async function(firstScenario, secondScenario){
             ).then(() => {return {status: 'success'}}).catch(err => TE(err.message))
         }).catch(err => TE(err.message));
 };
-module.exports.moveSceneries = moveSceneries;
+module.exports.moveScenarios = moveScenarios;
 
 const deleteScenario = async function(id) {
     let categories_info = {};
@@ -60,9 +60,9 @@ const deleteScenario = async function(id) {
 module.exports.deleteScenario = deleteScenario;
 
 const getScenario = async function(id) {
-    let sceneries_info = {};
+    let scenarios_info = {};
     let where = {scenario_id: id};
-    sceneries_info.status = 'get scenario';
+    scenarios_info.status = 'get scenario';
 
     if(!id) TE('Needs scenario id');
     return Scenario.findOne({
@@ -72,8 +72,8 @@ const getScenario = async function(id) {
 module.exports.getScenario = getScenario;
 
 const create = async function(body) {
-    let sceneries_info = {};
-    sceneries_info.status = 'create scenario';
+    let scenarios_info = {};
+    scenarios_info.status = 'create scenario';
 
     if(!body) TE('Needs data for create scenario');
     return Scenario.create(
@@ -83,8 +83,8 @@ const create = async function(body) {
 module.exports.create = create;
 
 const update = async function(body) {
-    let sceneries_info = {};
-    sceneries_info.status = 'update scenario';
+    let scenarios_info = {};
+    scenarios_info.status = 'update scenario';
 
     if(!body) TE('Needs data for update scenario');
     if(!body.scenario_id) TE('Needs category_id for update scenario');

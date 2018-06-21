@@ -54,7 +54,7 @@ const getAllForCase = async function(req, res) {
      */
     const case_id = req.body.case_id || req.body.filter_param.id;
     const data = req.body;
-    let err, sceneries, sceneriesArray;
+    let err, scenarios, scenariosArray;
     let sort_param = data.sort_param,
         page_number = data.page_number,
         items_per_page = data.items_per_page;
@@ -62,7 +62,7 @@ const getAllForCase = async function(req, res) {
     if(sort_param) {
         sort_sql = [[sort_param.field]];
     }
-    [err, sceneries] = await to(ScenarioService.getSceneries(
+    [err, scenarios] = await to(ScenarioService.getScenarios(
         items_per_page,
         items_per_page * (page_number - 1),
         filter_sql,
@@ -70,14 +70,14 @@ const getAllForCase = async function(req, res) {
     );
 
     if(err) return ReE(res, err, 422);
-    sceneriesArray = JSON.parse(JSON.stringify(sceneries));
+    scenariosArray = JSON.parse(JSON.stringify(scenarios));
     [err, totalCount] = await to(
         Scenario.count({
             where: filter_sql
         })
     );
 
-    return ReS(res, {page_number, items_per_page, totalCount, sceneries: sceneriesArray});
+    return ReS(res, {page_number, items_per_page, totalCount, scenarios: scenariosArray});
 };
 
 const moveScenario = async function(req, res) {
@@ -89,7 +89,7 @@ const moveScenario = async function(req, res) {
     const first_scenario = req.body.first_scenario;
     const second_scenario = req.body.second_scenario;
 
-    ScenarioService.moveSceneries(
+    ScenarioService.moveScenarios(
         first_scenario,
         second_scenario
     ).then(() => {
@@ -106,7 +106,7 @@ const deleteScenarioForList = async function(req, res) {
         scenario_id
     ).then(() => {
         getAllForCase(req, res).then(() => {
-            console.log('Success get sceneries')
+            console.log('Success get scenarios')
         });
     }).catch(err => { return ReE(res, err, 422) });
 };

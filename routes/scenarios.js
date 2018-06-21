@@ -6,9 +6,9 @@ require('./../middleware/passport')(passport);
 
 const ScenarioController = require('./../controllers/ScenarioController');
 
-//get sceneries for case
+//get scenarios for case
 router.post('/all',passport.authenticate('jwt', { session: false }), ScenarioController.getAllForCase);
-// move sceneries
+// move scenarios
 router.post('/move', passport.authenticate('jwt', { session:false}), ScenarioController.moveScenario);
 // delete scenario for list
 router.post('/delete', passport.authenticate('jwt', { session:false}), ScenarioController.deleteScenarioForList);
