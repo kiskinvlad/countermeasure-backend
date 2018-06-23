@@ -3,7 +3,12 @@ const Role = require('../models').USER_ROLE;
 const validator = require('validator');
 const TE = require('../utils').TE;
 const to = require('../utils').to;
-
+/**
+ * Get authentication unique key
+ * @method getUniqueKeyFromBody
+ * @param body
+ * @return {string}
+ */
 const getUniqueKeyFromBody = function(body) {// this is so they can send in 3 options unique_key, email, or phone and it will work
 
     /**
@@ -20,7 +25,12 @@ const getUniqueKeyFromBody = function(body) {// this is so they can send in 3 op
     return unique_key;
 };
 module.exports.getUniqueKeyFromBody = getUniqueKeyFromBody;
-
+/**
+ * Create user
+ * @method createUser
+ * @param userInfo
+ * @return {Promise<*>}
+ */
 const createUser = async function(userInfo) {
     let unique_key, auth_info, err;
 
@@ -44,7 +54,12 @@ const createUser = async function(userInfo) {
     }
 };
 module.exports.createUser = createUser;
-
+/**
+ * User authentication
+ * @method authUser
+ * @param userInfo
+ * @return {Promise<*>}
+ */
 const authUser = async function(userInfo) { //returns token
     let unique_key;
     let auth_info = {};

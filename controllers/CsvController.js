@@ -1,7 +1,13 @@
 const jsonexport = require('jsonexport');
 
 const ReE = require('../utils').ReE;
-
+/**
+ * Create comma separated values table
+ * @method createCvs
+ * @param req
+ * @param res
+ * @return {Promise<void>}
+ */
 const createCvs = async function (req, res) {
     const json_data = req.body;
     jsonexport(json_data, function(err, csv){

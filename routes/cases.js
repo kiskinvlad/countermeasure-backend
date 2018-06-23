@@ -4,22 +4,45 @@ const passport = require('passport');
 const path = require('path');
 
 const custom = require('./../middleware/custom');
+/**
+ * Passport middleware
+ */
 require('./../middleware/passport')(passport);
-
+/**
+ * Case api controller
+ */
 const CaseController = require('./../controllers/CaseController');
-//create case
+/**
+ * Case api entry points
+ */
+
+/**
+ * Create case api entry point
+ */
 router.post('/',passport.authenticate('jwt', { session: false }), CaseController.createCase);
-//get case 
+/**
+ * Get case api entry point
+ */
 router.get('/', passport.authenticate('jwt', { session:false}), CaseController.getCase);
-//update case
+/**
+ * Update case api entry point
+ */
 router.put('/', passport.authenticate('jwt', { session:false}), CaseController.updateCase);
-//get filter
+/**
+ * Get filtered cases api entry point
+ */
 router.post('/filter', passport.authenticate('jwt', { session: false }), CaseController.getFilter);
-//delete case
+/**
+ * Delete case api entry point
+ */
 router.post('/delete', passport.authenticate('jwt', { session:false }), CaseController.deleteCase);
-//get filter params
+/**
+ * Get case filter options api entry point
+ */
 router.get('/filter_params',passport.authenticate('jwt', { session: false }), CaseController.getFilterParams);
-//get sort params
+/**
+ * Get case sort options api entry point
+ */
 router.get('/sort_params',passport.authenticate('jwt', { session: false }), CaseController.getSortParams);
 
 module.exports = router;

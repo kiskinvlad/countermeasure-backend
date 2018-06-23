@@ -4,58 +4,76 @@ const ReS = require('../utils').ReS;
 const to = require('../utils').to;
 const User = require('../models').USER;
 const Organization = require('../models').ORGANIZATION;
-const Sequelize = require("sequelize");
-const Op = Sequelize.Op
-
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+/**
+ * Create user
+ * @method user
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const create = async function(req, res){
     let ret, err, user;
     const body = req.body;
     const requestor = req.user;
 
-    if (requestor.role_id !== 'CA' && (requestor.role_id !== 'OA' || requestor.org_id != body.org_id
+    if (requestor.role_id !== 'CA' && (requestor.role_id !== 'OA' || requestor.org_id !== body.org_id
           || body.role_id === 'CA')) {
-      err = 'Unauthorized access.';
-      ret = ReE(res, err, 401);
+        err = 'Unauthorized access.';
+        ret = ReE(res, err, 401);
     }
     if (!err && !body.unique_key && !body.email) {
-      err = 'Please enter an email to register.';
-      ret = ReE(res, err, 400);
+        err = 'Please enter an email to register.';
+        ret = ReE(res, err, 400);
     }
     if (!err && (!body.password || !body.role_id || !body.org_id)) {
-      err = 'Please enter all required fields.';
-      ret = ReE(res, err, 400);
+        err = 'Please enter all required fields.';
+        ret = ReE(res, err, 400);
     }
     // Check if number of enabled users is under member_limit
     if (!err && body.enabled > 0 && (body.role_id === 'OA' || body.role_id === 'OM')) {
         [err, isUnder] = await to(isUnderMemberLimit(requestor.org_id));
         if (err) {
-          ret = ReE(res, err, 400);
+            ret = ReE(res, err, 400);
         } else if (!isUnder) {
-          err = 'Cannot enable user.';
-          ret = ReE(res, err, 400);
+            err = 'Cannot enable user.';
+            ret = ReE(res, err, 400);
         }
     }
     // Create user
     if (!err) {
-      [err, user] = await to(authService.createUser(body));
+        [err, user] = await to(authService.createUser(body));
 
-      if(err) {
-        ret = ReE(res, err, 422);
-      } else {
-        ret = ReS(res, { message: 'Successfully created new user.', user: user.toWeb() }, 201);
-      }
+        if(err) {
+            ret = ReE(res, err, 422);
+        } else {
+            ret = ReS(res, { message: 'Successfully created new user.', user: user.toWeb() }, 201);
+        }
     }
 
     return ret;
 };
-
+/**
+ * Get user
+ * @method get
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const get = async function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     let user = req.user;
 
     return ReS(res, {user:user.toWeb()});
 };
-
+/**
+ * Get all users
+ * @method getAll
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const getAll = async function (req, res) {
     let err, data, ret, where, final;
     const user = req.user;
@@ -64,79 +82,91 @@ const getAll = async function (req, res) {
     const limit = isNaN(parseInt(req.query.limit)) ? null : parseInt(req.query.limit);
 
     if (!(user.role_id === 'CA' || (user.role_id === 'OA' && user.org_id == org_id))) {
-      ret = ReS(res, {error: 'Unauthorized access.'}, 401);
+        ret = ReS(res, {error: 'Unauthorized access.'}, 401);
     } else {
-      // Build WHERE clause
-      where = {};
-      if (req.query.type === 'member') {
-        where.role_id = {[Op.ne]: 'OG'};
-      } else if (req.query.type === 'guest') {
-        where.role_id = 'OG';
-        if (parseInt(req.query.enabled) === 1 || parseInt(req.query.enabled) === 0) {
-          where.enabled = req.query.enabled;
-        }
-        if (req.query.email) where.email = req.query.email;
-        if (req.query.name) {
-          where[Op.or]={first_name:{[Op.like]: `%${req.query.name}%`},last_name:{[Op.like]: `%${req.query.name}%`}};
-        }
-      }
-      if (org_id) {
-        where.org_id = org_id;
-      }
-
-      // Get all users and count
-      [err, data] = await to(
-          User.findAndCountAll({
-             where: where,
-             offset: offset,
-             limit: limit
-          })
-      );
-
-      if (err) {
-        ret = ReE(res, err);
-      } else {
-        final =  {count: data.count, users: data.rows};
+        // Build WHERE clause
+        where = {};
         if (req.query.type === 'member') {
-          // Get total number of enabled users
-          where.enabled = 1;
-          [err, data] = await to(
-            User.count({ where: where })
-          );
-          if (!err) {
-            final.total_enabled = data;
-          }
+            where.role_id = {[Op.ne]: 'OG'};
+        } else if (req.query.type === 'guest') {
+            where.role_id = 'OG';
+            if (parseInt(req.query.enabled) === 1 || parseInt(req.query.enabled) === 0) {
+                where.enabled = req.query.enabled;
+            }
+            if (req.query.email) where.email = req.query.email;
+            if (req.query.name) {
+                where[Op.or]={first_name:{[Op.like]: `%${req.query.name}%`},last_name:{[Op.like]: `%${req.query.name}%`}};
+            }
         }
-        ret = ReS(res, final);
-      }
+        if (org_id) {
+            where.org_id = org_id;
+        }
+
+        // Get all users and count
+        [err, data] = await to(
+            User.findAndCountAll({
+                where: where,
+                offset: offset,
+                limit: limit
+            })
+        );
+
+        if (err) {
+            ret = ReE(res, err);
+        } else {
+            final =  {count: data.count, users: data.rows};
+            if (req.query.type === 'member') {
+            // Get total number of enabled users
+                where.enabled = 1;
+                [err, data] = await to(
+                    User.count({ where: where })
+                );
+                if (!err) {
+                    final.total_enabled = data;
+                }
+            }
+            ret = ReS(res, final);
+        }
     }
 
     return ret;
 };
-
+/**
+ * Get user by id
+ * @method getUserByID
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const getUserByID = async function (req, res) {
     const user_id = req.params.id;
     const requestor = req.user;
     let ret;
 
     [err, data] = await to(
-      User.findOne({
-        where: {user_id: user_id}
-      })
+        User.findOne({
+            where: {user_id: user_id}
+        })
     );
 
     if (err) {
-      ret = ReE(res, err, 422);
+        ret = ReE(res, err, 422);
     } else if (requestor.role_id === 'CA' || requestor.user_id === data.user_id
-        || (requestor.role_id === 'OA' && requestor.org_id == data.org_id)) {
-      ret = ReS(res, {user: data});
+        || (requestor.role_id === 'OA' && requestor.org_id === data.org_id)) {
+        ret = ReS(res, {user: data});
     } else {
-      ret = ReS(res, {error: 'Unauthorized access.'}, 401);
+        ret = ReS(res, {error: 'Unauthorized access.'}, 401);
     }
 
     return ret;
 };
-
+/**
+ * Update user
+ * @method update
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const update = async function (req, res) {
     let err, user, data;
     user = req.user;
@@ -153,7 +183,13 @@ const update = async function (req, res) {
 
     return ReS(res, {message: 'Updated User: ' + user.email, user:user.toWeb()});
 };
-
+/**
+ * Update password
+ * @method updatePassword
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const updatePassword = async function (req, res) {
     let err, user, old_password, new_password;
     user = req.user;
@@ -166,9 +202,9 @@ const updatePassword = async function (req, res) {
     }
 
     [err, data] = await to(
-      user.update({
-        password: new_password
-      })
+        user.update({
+            password: new_password
+        })
     );
     if (err) {
         return ReE(res, err, 400);
@@ -176,9 +212,15 @@ const updatePassword = async function (req, res) {
 
     return ReS(res, {message: 'Updated password for user: ' + user.email});
 };
-
+/**
+ * Update user by id
+ * @method updateUserByID
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const updateUserByID = async function (req, res) {
-    console.log("\n CALLED updateUserByID");
+    console.log('\n CALLED updateUserByID');
     const user_id = req.params.id;
     const requestor = req.user;
     let err, user, body, ret;
@@ -186,59 +228,65 @@ const updateUserByID = async function (req, res) {
 
     // Get User
     [err, user] = await to(
-      User.findOne({
-        where: {user_id: user_id}
-      })
+        User.findOne({
+            where: {user_id: user_id}
+        })
     );
 
     if (err) {
-      ret = ReE(res, err, 422);
+        ret = ReE(res, err, 422);
     }
 
     // Only CA or OA with same org_id as the user can update the user
     if (!err && !(requestor.role_id === 'CA' || (requestor.role_id === 'OA'
           && requestor.org_id === user.org_id))) {
-      err = 'Unauthorized access.';
-      ret = ReE(res, err, 401);
+        err = 'Unauthorized access.';
+        ret = ReE(res, err, 401);
     }
 
     // Check if number of enabled users is under member_limit
-    if (!err && user.enabled == 0 && body.enabled > 0
+    if (!err && user.enabled === 0 && body.enabled > 0
             && (user.role_id === 'OA' || user.role_id === 'OM')) {
         [err, isUnder] = await to(isUnderMemberLimit(user.org_id));
         if (err) {
-          ret = ReE(res, err, 400);
+            ret = ReE(res, err, 400);
         } else if (!isUnder) {
-          err = 'Cannot enable user.';
-          ret = ReE(res, err, 400);
+            err = 'Cannot enable user.';
+            ret = ReE(res, err, 400);
         }
     }
 
     if (!err) {
-      // Cannot change OG role and can only set other roles to OA or OM
-      if (user.role_id === 'OG' || (body.role_id !== 'OA' && body.role_id !== 'OM')) {
-        delete body.role_id;
-      }
+        // Cannot change OG role and can only set other roles to OA or OM
+        if (user.role_id === 'OG' || (body.role_id !== 'OA' && body.role_id !== 'OM')) {
+            delete body.role_id;
+        }
 
-      // org_id cannot be changed
-      delete body.org_id;
+        // org_id cannot be changed
+        delete body.org_id;
 
-      // Only update password if set
-      if (!body.password) delete body.password;
+        // Only update password if set
+        if (!body.password) delete body.password;
 
-      // Save user
-      user.set(body);
-      [err, user] = await to(user.save());
-      if (err) {
-        ret = ReE(res, err, 400);
-      } else {
-        ret = ReS(res, {message: 'Updated User: ' + user.email, user:user.toWeb()});
-      }
+        // Save user
+        user.set(body);
+        [err, user] = await to(user.save());
+        if (err) {
+            ret = ReE(res, err, 400);
+        } else {
+            ret = ReS(res, {message: 'Updated User: ' + user.email, user:user.toWeb()});
+        }
     }
 
     return ret;
 };
-
+/**
+ * Remove user
+ * @method remove
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const remove = async function(req, res) {
     let user, err;
     user = req.user;
@@ -248,7 +296,13 @@ const remove = async function(req, res) {
 
     return ReS(res, { message: 'Deleted User' }, 204);
 };
-
+/**
+ * User login
+ * @method login
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const login = async function(req, res){
     const body = req.body;
     let err, user;
@@ -264,35 +318,41 @@ const login = async function(req, res){
     return ReS(res, responseData, 200)
 };
 
+/**
+ * Check user under organization member limit
+ * @method isUnderMemberLimit
+ * @param org_id
+ * @return {Promise<boolean>}
+ */
 // Return true if total number of enabled members for this organization
 // is less than the organization's member limit.
 async function isUnderMemberLimit(org_id) {
-  let err, data, enabled;
+    let err, data, enabled;
 
-  [err, enabled] = await to(
-    User.count({
-      where: {
-        org_id: org_id,
-        enabled: {[Op.gt]: 0},
-        role_id: {[Op.ne]: 'OG'}
-      }
-    })
-  );
-
-  if (!err) {
-    [err, data] = await to(
-      Organization.findOne({
-        where: {org_id: org_id},
-        attributes: ['member_limit']
-      })
+    [err, enabled] = await to(
+        User.count({
+            where: {
+                org_id: org_id,
+                enabled: {[Op.gt]: 0},
+                role_id: {[Op.ne]: 'OG'}
+            }
+        })
     );
 
     if (!err) {
-      return enabled < data.member_limit;
-    }
-  }
+        [err, data] = await to(
+            Organization.findOne({
+                where: {org_id: org_id},
+                attributes: ['member_limit']
+            })
+        );
 
-  return false;
+        if (!err) {
+            return enabled < data.member_limit;
+        }
+    }
+
+    return false;
 }
 
 module.exports = {

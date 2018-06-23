@@ -1,7 +1,12 @@
 const Disputed = require('../models').DISPUTED_T1_TA;
 const TE = require('../utils').TE;
 const to = require('../utils').to;
-
+/**
+ * Get disputed
+ * @method getDisputed
+ * @param disputed_t1_ta_id
+ * @return {Promise<*>}
+ */
 const getDisputed = async function(disputed_t1_ta_id){
     let disputed_info = {};
     disputed_info.status = 'get disputed';
@@ -23,7 +28,11 @@ const getDisputed = async function(disputed_t1_ta_id){
     return disputed;
 };
 module.exports.getDisputed = getDisputed;
-
+/**
+ * Get Disputes
+ * @method getDisputes
+ * @return {Promise<*>}
+ */
 const getDisputes = async function(){
     let disputed_info = {};
     disputed_info.status = 'get disputed';
@@ -35,7 +44,12 @@ const getDisputes = async function(){
     return disputes;
 };
 module.exports.getDisputes = getDisputes;
-
+/**
+ * Create disputed
+ * @method createDisputed
+ * @param body
+ * @return {Promise<*>}
+ */
 const createDisputed = async function(body){
     let err, disputed;
     delete body.disputed['case_id'];
@@ -47,12 +61,17 @@ const createDisputed = async function(body){
     );
 
     if (err) TE(err.message)
-    if (!disputed) TE("Can't create a disputed")
+    if (!disputed) TE("Can't create a disputed");
 
     return disputed;
 };
 module.exports.createDisputed = createDisputed;
-
+/**
+ * Update disputed
+ * @method updateDisputed
+ * @param body
+ * @return {Promise<*>}
+ */
 const updateDisputed = async function(body){
     let err, disputed;
     [err, disputed] = await to(
@@ -70,7 +89,12 @@ const updateDisputed = async function(body){
     return disputed;
 };
 module.exports.updateDisputed = updateDisputed;
-
+/**
+ * Remove disputed
+ * @method removeDisputed
+ * @param body
+ * @return {Promise<boolean>}
+ */
 const removeDisputed = async function(body){
     let err;
     await to(
@@ -86,7 +110,12 @@ const removeDisputed = async function(body){
     return true;
 };
 module.exports.removeDisputed = removeDisputed;
-
+/**
+ * Get disputed by case
+ * @method getDisputedByCase
+ * @param case_id
+ * @return {Promise<*>}
+ */
 const getDisputesByCase = async function(case_id){
     let disputes, err;
     [err, disputes] = await to(Disputed.findAll({where: {case_id: case_id}}));
@@ -95,7 +124,12 @@ const getDisputesByCase = async function(case_id){
     return disputes;
 };
 module.exports.getDisputesByCase = getDisputesByCase;
-
+/**
+ * Get disputed by summary
+ * @method getDisputedBySummary
+ * @param case_id
+ * @return {Promise<Array>}
+ */
 const getDisputesBySummary = async function(case_id){
     
     let disputes = [], err, res = [];

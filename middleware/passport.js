@@ -3,6 +3,10 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const User = require('../models').USER;
 const to = require('../utils').to;
 const CONFIG = require('../config/config').CONFIG;
+/**
+ * Passport middleware. Passport javascript web token strategy.
+ * @param passport
+ */
 module.exports = function(passport){
     let opts = {};
     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();

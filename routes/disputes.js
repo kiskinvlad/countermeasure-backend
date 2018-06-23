@@ -1,24 +1,42 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-
+/**
+ * Passport middleware
+ */
 require('./../middleware/passport')(passport);
-
+/**
+ * Disputed api controller
+ */
 const DisputedController = require('./../controllers/DisputedController');
 
-//get all disputes
+/**
+ * Get all disputes api entry point
+ */
 router.get('/',passport.authenticate('jwt', { session: false }), DisputedController.getDisputed);
-//get disputes by case
+/**
+ * Get all disputes by case api entry point
+ */
 router.get('/case',passport.authenticate('jwt', { session: false }), DisputedController.getDisputesByCase);
-//get disputes by summary
+/**
+ * Get disputes by summary api entry point
+ */
 router.get('/summary',passport.authenticate('jwt', { session: false }), DisputedController.getDisputesBySummary);
-//get disputed
+/**
+ * Get disputed api entry point
+ */
 router.get('/all', passport.authenticate('jwt', { session:false}), DisputedController.getDisputes);
-//create disputed
+/**
+ * Create disputed api entry point
+ */
 router.post('/create', passport.authenticate('jwt', { session:false}), DisputedController.createDisputed);
-//update disputed
+/**
+ * Update disputed api entry point
+ */
 router.post('/update', passport.authenticate('jwt', { session:false}), DisputedController.updateDisputed);
-//remove disputed
+/**
+ * Remove disputed api entry point
+ */
 router.post('/remove', passport.authenticate('jwt', { session:false}), DisputedController.removeDisputed);
 
 module.exports = router;

@@ -7,7 +7,13 @@ const Category = require('../models').CATEGORY;
 const ReE = require('../utils').ReE;
 const ReS = require('../utils').ReS;
 const to = require('../utils').to;
-
+/**
+ * Create category
+ * @method create
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const create = async function(req, res) {
     res.setHeader ( 'Content-Type', 'application/json' );
     const body = req.body;
@@ -58,7 +64,13 @@ const create = async function(req, res) {
         }).catch(err => { return ReE(res, err, 422) });
     }
 };
-
+/**
+ * Get categories by case
+ * @method getAllForCase
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const getAllForCase = async function(req, res) {
 
     /**
@@ -95,7 +107,13 @@ const getAllForCase = async function(req, res) {
     );
     return ReS(res, {page_number, items_per_page, totalCount, categories: categoriesArray});
 };
-
+/**
+ * Move category
+ * @method moveCategory
+ * @param req
+ * @param res
+ * @return {Promise<void>}
+ */
 const moveCategory = async function(req, res) {
 
     /**
@@ -114,7 +132,13 @@ const moveCategory = async function(req, res) {
         });
     }).catch(err => { return ReE(res, err, 422) });
 };
-
+/**
+ * Delete category from list
+ * @method deleteCategoryForList
+ * @param req
+ * @param res
+ * @return {Promise<void>}
+ */
 const deleteCategoryForList = async function(req, res) {
     const category_id = req.body.category_id;
 
@@ -126,7 +150,13 @@ const deleteCategoryForList = async function(req, res) {
         });
     }).catch(err => { return ReE(res, err, 422) });
 };
-
+/**
+ * Get category
+ * @method get
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const get = async function(req, res) {
     const category_id = req.query.category_id;
     let category, err;
@@ -134,7 +164,13 @@ const get = async function(req, res) {
     if (err) return ReE(res, err, 422);
     return ReS(res, {message: 'Successfully get category.', category: category.toWeb()}, 200);
 };
-
+/**
+ * Update category
+ * @method update
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const update = async function (req, res) {
     res.setHeader ( 'Content-Type', 'application/json' );
     const body = req.body;
@@ -179,7 +215,13 @@ const update = async function (req, res) {
         return ReS(res, {message: 'Successfully update category.', category: category.toWeb()}, 201);
     }
 };
-
+/**
+ * Remove category
+ * @method remove
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const remove = async function(req, res) {
     res.setHeader ( 'Content-Type', 'application/json' );
     let data, err, category;

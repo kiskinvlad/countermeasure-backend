@@ -1,7 +1,15 @@
 const Scenario = require('../models').SCENARIO;
 const TE = require('../utils').TE;
 const to = require('../utils').to;
-
+/**
+ * Get scenarios
+ * @method getScenarios
+ * @param limit
+ * @param offset
+ * @param where
+ * @param order
+ * @return {Promise<*>}
+ */
 const getScenarios = async function(limit, offset, where, order){
     let scenarios_info = {};
     scenarios_info.status = 'get scenarios';
@@ -18,7 +26,11 @@ const getScenarios = async function(limit, offset, where, order){
     return scenarios;
 };
 module.exports.getScenarios = getScenarios;
-
+/**
+ * Get last scenario
+ * @method getLastScenario
+ * @return {Promise<*>}
+ */
 const getLastScenario = async function() {
     let scenario, err;
     [err, scenario] = await to(Scenario.findAll({
@@ -29,7 +41,13 @@ const getLastScenario = async function() {
     return scenario;
 };
 module.exports.getLastScenario = getLastScenario;
-
+/**
+ * Change scenarios positions
+ * @method moveScenarios
+ * @param firstScenario
+ * @param secondScenario
+ * @return {Promise<T>}
+ */
 const moveScenarios = async function(firstScenario, secondScenario){
     let scenarios_info = {};
     scenarios_info.status = 'move scenarios';
@@ -47,7 +65,12 @@ const moveScenarios = async function(firstScenario, secondScenario){
         }).catch(err => TE(err.message));
 };
 module.exports.moveScenarios = moveScenarios;
-
+/**
+ * Delete scenario
+ * @method deleteScenario
+ * @param id
+ * @return {Promise<T>}
+ */
 const deleteScenario = async function(id) {
     let categories_info = {};
     categories_info.status = 'delete scenario';
@@ -58,7 +81,12 @@ const deleteScenario = async function(id) {
     ).then(() => {return {status: 'success'}}).catch(err => TE(err.message))
 };
 module.exports.deleteScenario = deleteScenario;
-
+/**
+ * Get scenario
+ * @method getScenario
+ * @param id
+ * @return {Promise<Model>}
+ */
 const getScenario = async function(id) {
     let scenarios_info = {};
     let where = {scenario_id: id};
@@ -70,7 +98,12 @@ const getScenario = async function(id) {
     }).then((data) => {return data}).catch(err => TE(err.message))
 };
 module.exports.getScenario = getScenario;
-
+/**
+ * Create scenario
+ * @method create
+ * @param body
+ * @return {Promise<T>}
+ */
 const create = async function(body) {
     let scenarios_info = {};
     scenarios_info.status = 'create scenario';
@@ -81,7 +114,12 @@ const create = async function(body) {
     ).then((data) => {return data}).catch(err => TE(err.message))
 };
 module.exports.create = create;
-
+/**
+ * Update scenario
+ * @method update
+ * @param body
+ * @return {Promise<T>}
+ */
 const update = async function(body) {
     let scenarios_info = {};
     scenarios_info.status = 'update scenario';

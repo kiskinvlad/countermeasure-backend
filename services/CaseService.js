@@ -1,6 +1,12 @@
-const Sequelize = require("sequelize");
+const Sequelize = require('sequelize');
 const Case = require('../models').CASE;
-
+/**
+ * Get all cases
+ * @method getAllCases
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const getAllCases = async function(req, res) {
     const Op = Sequelize.Op;
     let err, user, data;
@@ -18,11 +24,11 @@ const getAllCases = async function(req, res) {
 
     console.log('=================');
     console.log(sort_param);
-    if (sort_param == 'Matter ID') {
+    if (sort_param === 'Matter ID') {
         sort_param = 'matter_id';
-    } else if (sort_param == 'Name') {
+    } else if (sort_param === 'Name') {
         sort_param = 'name';
-    } else if (sort_param == 'Last Updated') {
+    } else if (sort_param === 'Last Updated') {
         sort_param = 'updated_at';
     } else {
         sort_param = 'matter_id';
@@ -46,16 +52,16 @@ const getAllCases = async function(req, res) {
     }
 
     switch (filter_param.id) {
-        case 1: // All
-            break;
-        case 2: // Updated in the last week
-            filter_sql.updated_at = { 
-                [Op.gte]: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
-                [Op.lt]: new Date()
-            };
-            break;
-        default: //exception
-            break;
+    case 1: // All
+        break;
+    case 2: // Updated in the last week
+        filter_sql.updated_at = {
+            [Op.gte]: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+            [Op.lt]: new Date()
+        };
+        break;
+    default: //exception
+        break;
     }
     
     //sorting query
@@ -75,15 +81,20 @@ const getAllCases = async function(req, res) {
         return ReE(res, err);
     }
     return cases;
-}
+};
 
 module.exports.getAllCases = getAllCases;
-
+/**
+ * Get filter sql
+ * @method getFilterSql
+ * @param req
+ * @return {Promise<{org_id: *|module:User.org_id|{type, notEmpty}|module:Organization.org_id|{autoIncrement, primaryKey, type}|module:Organization_guest_permissions.org_id}>}
+ */
 const getFilterSql = async function (req) {
     let filter_sql = { org_id: req.user.dataValues.org_id };
     let now = new Date();
     let search_name = req.body.search_name;
-    let filter_param = req.body.filter_param
+    let filter_param = req.body.filter_param;
 
     if (search_name) {
         if (!isNaN(search_name)) { // find by matter id
@@ -98,19 +109,19 @@ const getFilterSql = async function (req) {
     }
 
     switch (filter_param.id) {
-        case 1: // All
-            break;
-        case 2: // Updated in the last week
-            filter_sql.updated_at = { 
-                [Op.gte]: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
-                [Op.lt]: new Date()
-            };
-            break;
-        default: //exception
-            break;
+    case 1: // All
+        break;
+    case 2: // Updated in the last week
+        filter_sql.updated_at = {
+            [Op.gte]: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+            [Op.lt]: new Date()
+        };
+        break;
+    default: //exception
+        break;
     }
 
     return filter_sql;
-}
+};
 
 module.exports.getFilterSql = getFilterSql;

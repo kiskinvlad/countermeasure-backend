@@ -1,24 +1,45 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-
+/**
+ * Passport middleware
+ */
 require('./../middleware/passport')(passport);
-
+/**
+ * Category api controller
+ */
 const CategoryController = require('./../controllers/CategoryController');
+/**
+ * Category api entry points
+ */
 
-//get categories for case
+/**
+ * Get all categories for case api entry point
+ */
 router.post('/all',passport.authenticate('jwt', { session: false }), CategoryController.getAllForCase);
-// move categories
+/**
+ * Move category api entry point
+ */
 router.post('/move', passport.authenticate('jwt', { session:false}), CategoryController.moveCategory);
-// delete category for list
+/**
+ * Delete category from list api entry point
+ */
 router.post('/delete', passport.authenticate('jwt', { session:false}), CategoryController.deleteCategoryForList);
-// create category
+/**
+ * Create category api entry point
+ */
 router.post('/', passport.authenticate('jwt', { session:false}), CategoryController.create);
-//update category
+/**
+ * Update category api entry point
+ */
 router.put('/', passport.authenticate('jwt', { session:false}), CategoryController.update);
-//delete category
+/**
+ * Delete category api entry point
+ */
 router.delete('/', passport.authenticate('jwt', {session:false}), CategoryController.remove);
-// get category
+/**
+ * Get category api entry point
+ */
 router.get('/', passport.authenticate('jwt', {session:false}), CategoryController.get);
 
 module.exports = router;
