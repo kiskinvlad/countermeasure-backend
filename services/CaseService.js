@@ -34,7 +34,7 @@ const getAllCases = async function(req, res) {
         sort_param = 'matter_id';
     }
     console.log(sort_param);
-    
+
 
     let filter_sql = { org_id: user.dataValues.org_id }, sort_sql;
     let now = new Date();
@@ -52,27 +52,27 @@ const getAllCases = async function(req, res) {
     }
 
     switch (filter_param.id) {
-    case 1: // All
-        break;
-    case 2: // Updated in the last week
-        filter_sql.updated_at = {
-            [Op.gte]: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
-            [Op.lt]: new Date()
-        };
-        break;
-    default: //exception
-        break;
+        case 1: // All
+            break;
+        case 2: // Updated in the last week
+            filter_sql.updated_at = {
+                [Op.gte]: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+                [Op.lt]: new Date()
+            };
+            break;
+        default: //exception
+            break;
     }
-    
+
     //sorting query
-    sort_sql = [[sort_param, 'ASC']]; 
+    sort_sql = [[sort_param, 'ASC']];
 
     // find all by pagination
     [err, cases] = await to(
         Case.findAll({
-            limit: items_per_page, 
-            offset: items_per_page * (page_number - 1), 
-            where: filter_sql, 
+            limit: items_per_page,
+            offset: items_per_page * (page_number - 1),
+            where: filter_sql,
             order: sort_sql
         })
     );
@@ -109,19 +109,31 @@ const getFilterSql = async function (req) {
     }
 
     switch (filter_param.id) {
-    case 1: // All
-        break;
-    case 2: // Updated in the last week
-        filter_sql.updated_at = {
-            [Op.gte]: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
-            [Op.lt]: new Date()
-        };
-        break;
-    default: //exception
-        break;
+        case 1: // All
+            break;
+        case 2: // Updated in the last week
+            filter_sql.updated_at = {
+                [Op.gte]: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+                [Op.lt]: new Date()
+            };
+            break;
+        default: //exception
+            break;
     }
 
     return filter_sql;
 };
 
 module.exports.getFilterSql = getFilterSql;
+
+const getCount = async function(where) {
+    let err, data;
+    [err, data] = await to(
+        Case.count({
+            where: where
+        })
+    );
+    if(err) TE(err.message);
+    return data;
+}
+module.exports.getCount = getCount;

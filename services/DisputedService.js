@@ -45,6 +45,31 @@ const getDisputes = async function(){
 };
 module.exports.getDisputes = getDisputes;
 /**
+ * Get States Infor
+ * @method getStates
+ * @param body
+ * @return {Promise<*>}
+ */
+const getStates = async function(){
+    let disputes =[
+        {label:'Alberta', value:'AB'},
+        {label:'British Columbia', value:'BC'},
+        {label:'Manitoba', value:'MB'},
+        {label:'New Brunswick', value:'NB'},
+        {label:'Newfoundland and Labrador', value:'NL'},
+        {label:'Nova Scotia', value:'NS'},
+        {label:'Northwest Territories', value:'NT'},
+        {label:'Nunavut', value:'NU'},
+        {label:'Ontario', value:'ON'},
+        {label:'Prince Edward Island', value:'PE'},
+        {label:'Quebec', value:'QC'},
+        {label:'Saskatchewan', value:'SK'},
+        {label:'Yukon', value:'YT'}
+    ];
+    return disputes;
+};
+module.exports.getStates = getStates;
+/**
  * Create disputed
  * @method createDisputed
  * @param body

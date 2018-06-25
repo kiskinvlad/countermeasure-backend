@@ -35,6 +35,21 @@ const getDisputesByCase = async function(req, res){
 };
 module.exports.getDisputesByCase = getDisputesByCase;
 /**
+ * Get states infor
+ * @method getStates
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
+const getStates = async function(req, res){
+    let err, states;
+    [err, states] = await to(disputedService.getStates());
+    if(err) return ReE(res, err, 422);
+
+    return ReS(res, {states: states});
+};
+module.exports.getStates = getStates;
+/**
  * Get disputed by summary
  * @method getDisputedBySummary
  * @param req

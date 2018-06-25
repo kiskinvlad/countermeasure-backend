@@ -19,6 +19,10 @@ router.get('/',passport.authenticate('jwt', { session: false }), DisputedControl
  */
 router.get('/case',passport.authenticate('jwt', { session: false }), DisputedController.getDisputesByCase);
 /**
+ * Get states infor api entry point
+ */
+router.get('/getStates',passport.authenticate('jwt', { session: false }), DisputedController.getStates);
+/**
  * Get disputes by summary api entry point
  */
 router.get('/summary',passport.authenticate('jwt', { session: false }), DisputedController.getDisputesBySummary);

@@ -1,10 +1,11 @@
 const authService = require('./../services/AuthService');
+const UserService = require('./../services/UserService');
 const ReE = require('../utils').ReE;
 const ReS = require('../utils').ReS;
 const to = require('../utils').to;
 const User = require('../models').USER;
 const Organization = require('../models').ORGANIZATION;
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 /**
  * Create user
@@ -13,16 +14,18 @@ const Op = Sequelize.Op;
  * @param res
  * @return {Promise<*>}
  */
-const create = async function(req, res){
+const create = async function(req, res) {
     let ret, err, user;
     const body = req.body;
     const requestor = req.user;
 
-    if (requestor.role_id !== 'CA' && (requestor.role_id !== 'OA' || requestor.org_id !== body.org_id
+    // Check if user is allowed to create new users
+    if (requestor.role_id !== 'CA' && (requestor.role_id !== 'OA' || requestor.org_id != body.org_id
           || body.role_id === 'CA')) {
         err = 'Unauthorized access.';
         ret = ReE(res, err, 401);
     }
+    // Validate request body
     if (!err && !body.unique_key && !body.email) {
         err = 'Please enter an email to register.';
         ret = ReE(res, err, 400);
@@ -33,23 +36,17 @@ const create = async function(req, res){
     }
     // Check if number of enabled users is under member_limit
     if (!err && body.enabled > 0 && (body.role_id === 'OA' || body.role_id === 'OM')) {
-        [err, isUnder] = await to(isUnderMemberLimit(requestor.org_id));
-        if (err) {
-            ret = ReE(res, err, 400);
-        } else if (!isUnder) {
-            err = 'Cannot enable user.';
-            ret = ReE(res, err, 400);
-        }
+        [err, isUnderLimit] = await to(UserService.checkMemberLimit(requestor.org_id));
+        if (err) ret = ReE(res, err, 400);
     }
     // Create user
     if (!err) {
-        [err, user] = await to(authService.createUser(body));
-
-        if(err) {
-            ret = ReE(res, err, 422);
-        } else {
-            ret = ReS(res, { message: 'Successfully created new user.', user: user.toWeb() }, 201);
-        }
+      [err, user] = await to(authService.createUser(body));
+      if(err) {
+        ret = ReE(res, err, 422);
+      } else {
+        ret = ReS(res, { message: 'Successfully created new user.', user: user.toWeb() }, 201);
+      }
     }
 
     return ret;
@@ -80,55 +77,27 @@ const getAll = async function (req, res) {
     const org_id = req.query.org_id;
     const offset = isNaN(parseInt(req.query.offset)) ? null : parseInt(req.query.offset);
     const limit = isNaN(parseInt(req.query.limit)) ? null : parseInt(req.query.limit);
-
+    // Check if user is authroized to get users
     if (!(user.role_id === 'CA' || (user.role_id === 'OA' && user.org_id == org_id))) {
-        ret = ReS(res, {error: 'Unauthorized access.'}, 401);
-    } else {
-        // Build WHERE clause
-        where = {};
-        if (req.query.type === 'member') {
-            where.role_id = {[Op.ne]: 'OG'};
-        } else if (req.query.type === 'guest') {
-            where.role_id = 'OG';
-            if (parseInt(req.query.enabled) === 1 || parseInt(req.query.enabled) === 0) {
-                where.enabled = req.query.enabled;
-            }
-            if (req.query.email) where.email = req.query.email;
-            if (req.query.name) {
-                where[Op.or]={first_name:{[Op.like]: `%${req.query.name}%`},last_name:{[Op.like]: `%${req.query.name}%`}};
-            }
-        }
-        if (org_id) {
-            where.org_id = org_id;
-        }
-
-        // Get all users and count
-        [err, data] = await to(
-            User.findAndCountAll({
-                where: where,
-                offset: offset,
-                limit: limit
-            })
-        );
-
-        if (err) {
-            ret = ReE(res, err);
-        } else {
-            final =  {count: data.count, users: data.rows};
-            if (req.query.type === 'member') {
-            // Get total number of enabled users
-                where.enabled = 1;
-                [err, data] = await to(
-                    User.count({ where: where })
-                );
-                if (!err) {
-                    final.total_enabled = data;
-                }
-            }
-            ret = ReS(res, final);
-        }
+      err = 'Unauthorized access.';
+      ret = ReE(res, err, 401);
     }
-
+    // Get users and count (total number of users for pagination)
+    if (!err) {
+      where = UserService.filterUsers(req.query);
+      [err, data] = await to(UserService.getUsersAndCount(where, offset, limit));
+      if (err) ret = ReE(res, err);
+    }
+    // Build and return final response
+    if (!err) {
+      final = {count: data.count, users: data.rows};
+      if (req.query.type === 'member') {
+        // Get total number of enabled members
+        [err, data] = await to(UserService.getEnabledCount(where));
+        if (!err) final.total_enabled = data;
+      }
+      ret = ReS(res, final);
+    }
     return ret;
 };
 /**
@@ -143,11 +112,7 @@ const getUserByID = async function (req, res) {
     const requestor = req.user;
     let ret;
 
-    [err, data] = await to(
-        User.findOne({
-            where: {user_id: user_id}
-        })
-    );
+    [err, data] = await to(UserService.getUserByID(user_id));
 
     if (err) {
         ret = ReE(res, err, 422);
@@ -220,19 +185,13 @@ const updatePassword = async function (req, res) {
  * @return {Promise<*>}
  */
 const updateUserByID = async function (req, res) {
-    console.log('\n CALLED updateUserByID');
     const user_id = req.params.id;
     const requestor = req.user;
     let err, user, body, ret;
     body = req.body;
 
     // Get User
-    [err, user] = await to(
-        User.findOne({
-            where: {user_id: user_id}
-        })
-    );
-
+    [err, user] = await to(UserService.getUserByID(user_id));
     if (err) {
         ret = ReE(res, err, 422);
     }
@@ -245,39 +204,30 @@ const updateUserByID = async function (req, res) {
     }
 
     // Check if number of enabled users is under member_limit
-    if (!err && user.enabled === 0 && body.enabled > 0
-            && (user.role_id === 'OA' || user.role_id === 'OM')) {
-        [err, isUnder] = await to(isUnderMemberLimit(user.org_id));
-        if (err) {
-            ret = ReE(res, err, 400);
-        } else if (!isUnder) {
-            err = 'Cannot enable user.';
-            ret = ReE(res, err, 400);
-        }
+    if (!err && user.enabled == 0 && body.enabled > 0
+          && (user.role_id === 'OA' || user.role_id === 'OM')) {
+      [err, isUnder] = await to(UserService.checkMemberLimit(user.org_id));
+      if (err) ret = ReE(res, err, 400);
     }
 
     if (!err) {
-        // Cannot change OG role and can only set other roles to OA or OM
-        if (user.role_id === 'OG' || (body.role_id !== 'OA' && body.role_id !== 'OM')) {
-            delete body.role_id;
-        }
-
-        // org_id cannot be changed
-        delete body.org_id;
-
-        // Only update password if set
-        if (!body.password) delete body.password;
-
-        // Save user
-        user.set(body);
-        [err, user] = await to(user.save());
-        if (err) {
-            ret = ReE(res, err, 400);
-        } else {
-            ret = ReS(res, {message: 'Updated User: ' + user.email, user:user.toWeb()});
-        }
+      // Cannot change OG role and can only set other roles to OA or OM
+      if (user.role_id === 'OG' || (body.role_id !== 'OA' && body.role_id !== 'OM')) {
+        delete body.role_id;
+      }
+      // org_id cannot be changed
+      delete body.org_id;
+      // Only update password if set
+      if (!body.password) delete body.password;
+      // Save user
+      user.set(body);
+      [err, user] = await to(user.save());
+      if (err) {
+        ret = ReE(res, err, 400);
+      } else {
+        ret = ReS(res, {message: 'Updated User: ' + user.email, user:user.toWeb()});
+      }
     }
-
     return ret;
 };
 /**
@@ -317,43 +267,6 @@ const login = async function(req, res){
     res.header('Authorization', authToken);
     return ReS(res, responseData, 200)
 };
-
-/**
- * Check user under organization member limit
- * @method isUnderMemberLimit
- * @param org_id
- * @return {Promise<boolean>}
- */
-// Return true if total number of enabled members for this organization
-// is less than the organization's member limit.
-async function isUnderMemberLimit(org_id) {
-    let err, data, enabled;
-
-    [err, enabled] = await to(
-        User.count({
-            where: {
-                org_id: org_id,
-                enabled: {[Op.gt]: 0},
-                role_id: {[Op.ne]: 'OG'}
-            }
-        })
-    );
-
-    if (!err) {
-        [err, data] = await to(
-            Organization.findOne({
-                where: {org_id: org_id},
-                attributes: ['member_limit']
-            })
-        );
-
-        if (!err) {
-            return enabled < data.member_limit;
-        }
-    }
-
-    return false;
-}
 
 module.exports = {
     create, get, update, remove, login, updatePassword, getAll, getUserByID, updateUserByID
