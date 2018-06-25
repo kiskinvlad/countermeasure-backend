@@ -1,7 +1,15 @@
 const Category = require('../models').CATEGORY;
 const TE = require('../utils').TE;
 const to = require('../utils').to;
-
+/**
+ * Get categories
+ * @method getCategories
+ * @param limit
+ * @param offset
+ * @param where
+ * @param order
+ * @return {Promise<*>}
+ */
 const getCategories = async function(limit, offset, where, order){
     let categories_info = {};
     categories_info.status = 'get categories';
@@ -18,7 +26,11 @@ const getCategories = async function(limit, offset, where, order){
     return categories;
 };
 module.exports.getCategories = getCategories;
-
+/**
+ * Get last category
+ * @method getLastCategory
+ * @return {Promise<*>}
+ */
 const getLastCategory = async function() {
     let category, err;
     [err, category] = await to(Category.findAll({
@@ -29,7 +41,13 @@ const getLastCategory = async function() {
     return category;
 };
 module.exports.getLastCategory = getLastCategory;
-
+/**
+ * Change categories positions
+ * @method moveCategories
+ * @param firstCategory
+ * @param secondCategory
+ * @return {Promise<T>}
+ */
 const moveCategories = async function(firstCategory, secondCategory){
     let categories_info = {};
     categories_info.status = 'move categories';
@@ -47,7 +65,12 @@ const moveCategories = async function(firstCategory, secondCategory){
         }).catch(err => TE(err.message));
 };
 module.exports.moveCategories = moveCategories;
-
+/**
+ * Delete category
+ * @method deleteCategory
+ * @param id
+ * @return {Promise<T>}
+ */
 const deleteCategory = async function(id) {
     let categories_info = {};
     categories_info.status = 'delete category';
@@ -58,7 +81,12 @@ const deleteCategory = async function(id) {
     ).then(() => {return {status: 'success'}}).catch(err => TE(err.message))
 };
 module.exports.deleteCategory = deleteCategory;
-
+/**
+ * Get Category
+ * @method getCategory
+ * @param id
+ * @return {Promise<Model>}
+ */
 const getCategory = async function(id) {
     let categories_info = {};
     let where = {category_id: id};
@@ -70,7 +98,12 @@ const getCategory = async function(id) {
     }).then((data) => {return data}).catch(err => TE(err.message))
 };
 module.exports.getCategory = getCategory;
-
+/**
+ * Create category
+ * @method createCategory
+ * @param body
+ * @return {Promise<T>}
+ */
 const create = async function(body) {
     let categories_info = {};
     categories_info.status = 'create category';
@@ -81,7 +114,12 @@ const create = async function(body) {
     ).then((data) => {return data}).catch(err => TE(err.message))
 };
 module.exports.create = create;
-
+/**
+ * Update category
+ * @method update
+ * @param body
+ * @return {Promise<T>}
+ */
 const update = async function(body) {
     let categories_info = {};
     categories_info.status = 'update category';

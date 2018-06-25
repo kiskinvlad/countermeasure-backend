@@ -1,5 +1,22 @@
 module.exports = (sequelize, Sequelize) => {
-
+    /**
+     * Scenario table data model
+     * @module Scenario
+     * @property Scenario model
+     * @type {Model|void|*|{}}
+     * @param scenario_id
+     * @param case_id
+     * @param name
+     * @param order_position
+     * @param name
+     * @param probability
+     * @param description
+     * @param taxable_income
+     * @param taxes
+     * @param penalties
+     * @param interest
+     * @param order_position
+     */
     const Scenario = sequelize.define('SCENARIO', {
         scenario_id: {
             autoIncrement: true,
@@ -52,11 +69,19 @@ module.exports = (sequelize, Sequelize) => {
         tableName: 'SCENARIO',
         timestamps: false
     });
-
+    /**
+     * Model associate method. Create scenario table one to one association with case table.
+     * @method Scenario.associate
+     * @param models
+     */
     Scenario.associate = function(models) {
         this.hasOne(models.CASE, {foreignKey: 'case_id', targetKey: 'case_id'});
     };
-
+    /**
+     * Convert model data to json format.
+     * @method toWeb
+     * @return JSON
+     */
     Scenario.prototype.toWeb = function () {
         return this.toJSON();
     };

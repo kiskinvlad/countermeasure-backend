@@ -1,5 +1,10 @@
 const Role = require('../models').USER_ROLE;
-
+/**
+ * Get user role
+ * @method getRole
+ * @param role_id
+ * @return {Promise<*>}
+ */
 const getRole = async function(role_id){
     let role_info = {};
     role_info.status = 'get role';

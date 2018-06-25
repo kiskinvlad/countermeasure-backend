@@ -1,5 +1,18 @@
 require('dotenv').config();
-
+/**
+ * App configs
+ * @type object
+ * @param CONFIG.app - application environment
+ * @param CONFIG.port - application port
+ * @param CONFIG.db_dialect - database dialect
+ * @param CONFIG.db_host - database host address
+ * @param CONFIG.port - database port
+ * @param CONFIG.db_name - database name
+ * @param CONFIG.db_user - database user admin
+ * @param CONFIG.db_paswword - database user admin password
+ * @param CONFIG.jwt_encryption - javascript web token encryption key
+ * @param CONFIG.jwt_expiration - javascript web token expiration time
+ */
 const CONFIG = {};
 
 CONFIG.app         = process.env.APP         || 'development';

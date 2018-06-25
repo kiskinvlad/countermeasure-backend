@@ -2,10 +2,22 @@ const PermissionService = require('./../services/PermissionService');
 const ReE = require('../utils').ReE;
 const ReS = require('../utils').ReS;
 const to = require('../utils').to;
-
+/**
+ * Create permission
+ * @method create
+ * @param req
+ * @param res
+ * @return {Promise<void>}
+ */
 const create = async function(req, res) {
 };
-
+/**
+ * Create user permissions
+ * @method bulkCreate
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 // Insert multiple rows into ORGANIZATION_GUEST_PERMISSIONS table
 const bulkCreate = async function(req, res) {
   let ret, err, data, i, len;
@@ -35,10 +47,22 @@ const bulkCreate = async function(req, res) {
   }
   return ReS(res, {user_id: user_id, org_id: org_id, limit: limit}, 200);
 };
-
+/**
+ * Get permission
+ * @method get
+ * @param req
+ * @param res
+ * @return {Promise<void>}
+ */
 const get = async function (req, res) {
 };
-
+/**
+ * Get permissions by user id
+ * @method getPermissionsBySerID
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const getPermissionsByUserID = async function (req, res) {
   const requestor = req.user;
   const user_id = isNaN(parseInt(req.query.user_id)) ? null : parseInt(req.query.user_id);
@@ -47,19 +71,30 @@ const getPermissionsByUserID = async function (req, res) {
   const limit = isNaN(parseInt(req.query.limit)) ? null : parseInt(req.query.limit);
 
   if (requestor.role_id !== 'CA' && (requestor.role_id !== 'OA' || requestor.org_id !== org_id)) {
-    return ReE(res, 'Unauthorized access.', 400);
+      return ReE(res, 'Unauthorized access.', 400);
   }
-
   [err, data] = await to(PermissionService.getCasePermissions(user_id, org_id, offset, limit, req.query));
   if (err) {
     return ReE(res, err, 422);
   }
   return ReS(res, data, 200);
 };
-
+/**
+ * Remove permission
+ * @method remove
+ * @param req
+ * @param res
+ * @return {Promise<void>}
+ */
 const remove = async function(req, res) {
 };
-
+/**
+ * Remove user permissions
+ * @method bulkRemove
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 // Delete multiple rows from ORGANIZATION_GUEST_PERMISSIONS table
 const bulkRemove = async function(req, res) {
   let ret, err, data, i, len;
@@ -81,5 +116,5 @@ const bulkRemove = async function(req, res) {
 };
 
 module.exports = {
-  create, get, remove, bulkCreate, getPermissionsByUserID, bulkRemove
+    create, get, remove, bulkCreate, getPermissionsByUserID, bulkRemove
 };

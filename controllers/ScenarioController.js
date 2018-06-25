@@ -4,7 +4,13 @@ const Scenario = require('../models').SCENARIO;
 const ReE = require('../utils').ReE;
 const ReS = require('../utils').ReS;
 const to = require('../utils').to;
-
+/**
+ * Create scenario
+ * @method create
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const create = async function(req, res) {
     res.setHeader ( 'Content-Type', 'application/json' );
     const body = req.body;
@@ -46,7 +52,13 @@ const create = async function(req, res) {
         }).catch(err => { return ReE(res, err, 422) });
     }
 };
-
+/**
+ * Get all scenarios for case
+ * @method getAllForCase
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const getAllForCase = async function(req, res) {
     /**
      * @param {{filter_param:object}} filter_param
@@ -79,7 +91,13 @@ const getAllForCase = async function(req, res) {
 
     return ReS(res, {page_number, items_per_page, totalCount, scenarios: scenariosArray});
 };
-
+/**
+ * Move scenario
+ * @method moveScenario
+ * @param req
+ * @param res
+ * @return {Promise<void>}
+ */
 const moveScenario = async function(req, res) {
 
     /**
@@ -98,7 +116,13 @@ const moveScenario = async function(req, res) {
         });
     }).catch(err => { return ReE(res, err, 422) });
 };
-
+/**
+ * Delete scenario from list
+ * @method deleteScenarioForList
+ * @param req
+ * @param res
+ * @return {Promise<void>}
+ */
 const deleteScenarioForList = async function(req, res) {
     const scenario_id = req.body.scenario_id;
 
@@ -110,7 +134,13 @@ const deleteScenarioForList = async function(req, res) {
         });
     }).catch(err => { return ReE(res, err, 422) });
 };
-
+/**
+ * Get scenario
+ * @method get
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const get = async function(req, res) {
     const scenario_id = req.query.scenario_id;
     let scenario, err;
@@ -118,7 +148,13 @@ const get = async function(req, res) {
     if (err) return ReE(res, err, 422);
     return ReS(res, {message: 'Successfully get scenario.', scenario: scenario.toWeb()}, 200);
 };
-
+/**
+ * Update scenario
+ * @method update
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const update = async function (req, res) {
     res.setHeader ( 'Content-Type', 'application/json' );
     const body = req.body;
@@ -157,7 +193,13 @@ const update = async function (req, res) {
         return ReS(res, {message: 'Successfully update scenario.', scenario: scenario.toWeb()}, 201);
     }
 };
-
+/**
+ * Remove scenario
+ * @method remove
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const remove = async function(req, res) {
     res.setHeader ( 'Content-Type', 'application/json' );
     let data, err, scenario;

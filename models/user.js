@@ -7,7 +7,22 @@ const TE = require('../utils').TE;
 
 
 module.exports = (sequelize, Sequelize) => {
-
+    /**
+     * User table data model
+     * @module User
+     * @property User model
+     * @type {Model|void|*|{}}
+     * @param user_id
+     * @param org_id
+     * @param role_id
+     * @param email
+     * @param password
+     * @param first_name
+     * @param last_name
+     * @param phone
+     * @param create_time
+     * @param enabled
+     */
     const User = sequelize.define('USER', {
         user_id: {
             autoIncrement: true,
@@ -57,11 +72,17 @@ module.exports = (sequelize, Sequelize) => {
         tableName: 'USER',
         timestamps: false
     });
-
+    /**
+     * Model associate method. Create user table one to one association with organization table.
+     * @method User.associate
+     * @param models
+     */
     User.associate = function (models) {
         this.belongsTo(models.ORGANIZATION, {foreignKey: 'org_id', targetKey: 'org_id'});
     };
-
+    /**
+     * Hash user before save to database
+     */
     User.beforeSave(async (user) => {
         let err;
         if (user.changed('password')) {
@@ -76,7 +97,11 @@ module.exports = (sequelize, Sequelize) => {
             // user.password = hash;
         }
     });
-
+    /**
+     * Compare user password while register
+     * @param pw
+     * @return {Promise<User>}
+     */
     User.prototype.comparePassword = async function (pw) {
         let err, pass;
         if(!this.password) TE('password not set');
@@ -89,12 +114,19 @@ module.exports = (sequelize, Sequelize) => {
 
         return this;
     };
-
+    /**
+     * Get user javascript web token
+     * @return {string} - Barer auth
+     */
     User.prototype.getJWT = function () {
         let expiration_time = parseInt(CONFIG.jwt_expiration);
         return 'Bearer ' + jwt.sign({ user_id: this.user_id }, CONFIG.jwt_encryption, { expiresIn: expiration_time });
     };
-
+    /**
+     * Convert model data to json format.
+     * @method toWeb
+     * @return JSON
+     */
     User.prototype.toWeb = function () {
         return this.toJSON();
     };

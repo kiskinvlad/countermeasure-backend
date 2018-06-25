@@ -7,7 +7,13 @@ const User = require('../models').USER;
 const Organization = require('../models').ORGANIZATION;
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-
+/**
+ * Create user
+ * @method user
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const create = async function(req, res) {
     let ret, err, user;
     const body = req.body;
@@ -16,17 +22,17 @@ const create = async function(req, res) {
     // Check if user is allowed to create new users
     if (requestor.role_id !== 'CA' && (requestor.role_id !== 'OA' || requestor.org_id != body.org_id
           || body.role_id === 'CA')) {
-      err = 'Unauthorized access.';
-      ret = ReE(res, err, 401);
+        err = 'Unauthorized access.';
+        ret = ReE(res, err, 401);
     }
     // Validate request body
     if (!err && !body.unique_key && !body.email) {
-      err = 'Please enter an email to register.';
-      ret = ReE(res, err, 400);
+        err = 'Please enter an email to register.';
+        ret = ReE(res, err, 400);
     }
     if (!err && (!body.password || !body.role_id || !body.org_id)) {
-      err = 'Please enter all required fields.';
-      ret = ReE(res, err, 400);
+        err = 'Please enter all required fields.';
+        ret = ReE(res, err, 400);
     }
     // Check if number of enabled users is under member_limit
     if (!err && body.enabled > 0 && (body.role_id === 'OA' || body.role_id === 'OM')) {
@@ -45,14 +51,26 @@ const create = async function(req, res) {
 
     return ret;
 };
-
+/**
+ * Get user
+ * @method get
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const get = async function (req, res) {
     res.setHeader('Content-Type', 'application/json');
     let user = req.user;
 
     return ReS(res, {user:user.toWeb()});
 };
-
+/**
+ * Get all users
+ * @method getAll
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const getAll = async function (req, res) {
     let err, data, ret, where, final;
     const user = req.user;
@@ -82,7 +100,13 @@ const getAll = async function (req, res) {
     }
     return ret;
 };
-
+/**
+ * Get user by id
+ * @method getUserByID
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const getUserByID = async function (req, res) {
     const user_id = req.params.id;
     const requestor = req.user;
@@ -91,18 +115,23 @@ const getUserByID = async function (req, res) {
     [err, data] = await to(UserService.getUserByID(user_id));
 
     if (err) {
-      ret = ReE(res, err, 422);
+        ret = ReE(res, err, 422);
     } else if (requestor.role_id === 'CA' || requestor.user_id === data.user_id
-        || (requestor.role_id === 'OA' && requestor.org_id == data.org_id)) {
-      ret = ReS(res, {user: data});
+        || (requestor.role_id === 'OA' && requestor.org_id === data.org_id)) {
+        ret = ReS(res, {user: data});
     } else {
-      ret = ReS(res, {error: 'Unauthorized access.'}, 401);
+        ret = ReS(res, {error: 'Unauthorized access.'}, 401);
     }
 
     return ret;
 };
-
-// For users to update their own account info
+/**
+ * Update user
+ * @method update
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const update = async function (req, res) {
     let err, user, data;
     user = req.user;
@@ -119,7 +148,13 @@ const update = async function (req, res) {
 
     return ReS(res, {message: 'Updated User: ' + user.email, user:user.toWeb()});
 };
-
+/**
+ * Update password
+ * @method updatePassword
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const updatePassword = async function (req, res) {
     let err, user, old_password, new_password;
     user = req.user;
@@ -132,9 +167,9 @@ const updatePassword = async function (req, res) {
     }
 
     [err, data] = await to(
-      user.update({
-        password: new_password
-      })
+        user.update({
+            password: new_password
+        })
     );
     if (err) {
         return ReE(res, err, 400);
@@ -142,8 +177,13 @@ const updatePassword = async function (req, res) {
 
     return ReS(res, {message: 'Updated password for user: ' + user.email});
 };
-
-// Update user by user ID
+/**
+ * Update user by id
+ * @method updateUserByID
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const updateUserByID = async function (req, res) {
     const user_id = req.params.id;
     const requestor = req.user;
@@ -153,14 +193,14 @@ const updateUserByID = async function (req, res) {
     // Get User
     [err, user] = await to(UserService.getUserByID(user_id));
     if (err) {
-      ret = ReE(res, err, 422);
+        ret = ReE(res, err, 422);
     }
 
     // Only CA or OA with same org_id as the user can update the user
     if (!err && !(requestor.role_id === 'CA' || (requestor.role_id === 'OA'
           && requestor.org_id === user.org_id))) {
-      err = 'Unauthorized access.';
-      ret = ReE(res, err, 401);
+        err = 'Unauthorized access.';
+        ret = ReE(res, err, 401);
     }
 
     // Check if number of enabled users is under member_limit
@@ -190,7 +230,13 @@ const updateUserByID = async function (req, res) {
     }
     return ret;
 };
-
+/**
+ * Remove user
+ * @method remove
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const remove = async function(req, res) {
     let user, err;
     user = req.user;
@@ -200,7 +246,13 @@ const remove = async function(req, res) {
 
     return ReS(res, { message: 'Deleted User' }, 204);
 };
-
+/**
+ * User login
+ * @method login
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const login = async function(req, res){
     const body = req.body;
     let err, user;

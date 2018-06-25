@@ -1,6 +1,19 @@
 module.exports = (sequelize, Sequelize) => {
-
-    var Case = sequelize.define('CASE', {
+    /**
+     * Case table data model
+     * @module Case
+     * @property Case model
+     * @type {Model|void|*|{}}
+     * @param case_id
+     * @param org_id
+     * @param matter_id
+     * @param name
+     * @param description
+     * @param updated_at
+     * @param updated_by_name
+     * @param updated_by_id
+     */
+    const Case = sequelize.define('CASE', {
         case_id: {
             autoIncrement: true,
             primaryKey: true,
@@ -45,7 +58,11 @@ module.exports = (sequelize, Sequelize) => {
         tableName: 'CASE',
         timestamps: false
     });
-  
+    /**
+     * Model associate method. Create case table one to many association with disputed_t1_ta table.
+     * @method Case.associate
+     * @param models
+     */
     Case.associate = function(models) {
         this.hasMany(models.DISPUTED_T1_TA, {foreignKey: 'case_id', targetKey: 'case_id'});
     };

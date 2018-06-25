@@ -1,6 +1,20 @@
 module.exports = (sequelize, Sequelize) => {
-
-    Organization = sequelize.define('ORGANIZATION', {
+    /**
+     * Organization table data model
+     * @module Organization
+     * @property Organization model
+     * @type {Model|void|*|{}}
+     * @param org_id
+     * @param org_name
+     * @param first_name
+     * @param last_name
+     * @param phone
+     * @param email
+     * @param create_time
+     * @param enabled
+     * @param member_limit
+     */
+    const Organization = sequelize.define('ORGANIZATION', {
         org_id: {
             autoIncrement: true,
             primaryKey: true,
@@ -50,7 +64,11 @@ module.exports = (sequelize, Sequelize) => {
         tableName: 'ORGANIZATION',
         timestamps: false
     });
-
+    /**
+     * Model associate method. Create organization table one to many association with case table.
+     * @method Organization.associate
+     * @param models
+     */
     Organization.associate = function(models) {
         this.hasMany(models.CASE, {foreignKey: 'org_id', targetKey: 'org_id'});
     };

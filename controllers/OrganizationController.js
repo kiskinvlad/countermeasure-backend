@@ -5,7 +5,13 @@ const Organization = require('../models').ORGANIZATION;
 const Op = require("sequelize").Op;
 const sequelize = require('../models').sequelize;
 const OrganizationService = require('./../services/OrganizationService');
-
+/**
+ * Create organization
+ * @method createOrg
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const createOrg = async function(req, res){
   let err, data;
   const user = req.user;
@@ -20,8 +26,14 @@ const createOrg = async function(req, res){
     return ReE(res, err, 400);
   }
   return ReS(res, {message: 'Successfully created organization.', organization: data});
-};
-
+};  
+/**
+ * Get organization statistic
+ * @method getOrgStats
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const getOrgStats = async function(req, res){
   let ret, err, orgs;
   let data = {};
@@ -49,7 +61,13 @@ const getOrgStats = async function(req, res){
   }
   return ret;
 };
-
+/**
+ * Get organization by id
+ * @method getOrgByID
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const getOrgByID = async function (req, res) {
   const org_id = req.params.id;
   let err, ret, org;
@@ -78,7 +96,13 @@ const getOrgByID = async function (req, res) {
   }
   return ret;
 };
-
+/**
+ * Update organization
+ * @method updateOrg
+ * @param req
+ * @param res
+ * @return {Promise<*>}
+ */
 const updateOrg = async function (req, res) {
   const org_id = req.params.id;
   let err, ret, user, org;
