@@ -75,7 +75,7 @@ CREATE TABLE `DISPUTED_T1_TA` (
   `case_id` int(11) NOT NULL,
   `taxpayer` varchar(45) NOT NULL,
   `year` int(4) NOT NULL DEFAULT '2017',
-  `province` varchar(2) NOT NULL DEFAULT 'ON',
+  `province` varchar(2) NOT NULL DEFAULT 'AB',
   `federal_tax_applies` tinyint(1) NOT NULL DEFAULT '1',
   `provincial_tax_applies` tinyint(1) NOT NULL DEFAULT '1',
   `filing_date` date DEFAULT NULL,

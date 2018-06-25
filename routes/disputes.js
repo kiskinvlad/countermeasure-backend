@@ -10,6 +10,8 @@ const DisputedController = require('./../controllers/DisputedController');
 router.get('/',passport.authenticate('jwt', { session: false }), DisputedController.getDisputed);
 //get disputes by case
 router.get('/case',passport.authenticate('jwt', { session: false }), DisputedController.getDisputesByCase);
+//get states infor
+router.get('/getStates',passport.authenticate('jwt', { session: false }), DisputedController.getStates);
 //get disputes by summary
 router.get('/summary',passport.authenticate('jwt', { session: false }), DisputedController.getDisputesBySummary);
 //get disputed
