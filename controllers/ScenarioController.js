@@ -138,6 +138,9 @@ const update = async function (req, res) {
     if(!body.description) {
         return ReE(res, 'Description value is not exist', 422);
     }
+    if(!body.taxable_income) {
+        return ReE
+    }
     if(!body.taxes) {
         return ReE(res, 'Taxes value is not exist', 422);
     }
