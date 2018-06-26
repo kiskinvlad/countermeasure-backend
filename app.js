@@ -52,36 +52,6 @@ app.use(cors());
  */
 app.use('/users', usersRouter);
 /**
- * Middleware to prevent unauthorizated api requests
- */
-app.use(function(req, res, next) {
-
-    let token = req.body.token || req.query.token || req.headers['x-access-token'] || req.headers['Authorization'] || req.headers['authorization'];
-    if (!token)  {
-        return;
-    }
-    token = token.split(' ')[1];
-    if (token) {
-        jwt.verify(token, app.get('secret'), function(err, decoded) {
-            if (err) {
-                console.log(err);
-
-                return res.json({ success: false, message: 'Failed to authenticate token.' });
-            } else {
-                req.decoded = decoded;
-                next();
-            }
-        });
-
-    } else {
-        return res.status(403).send({
-            success: false,
-            message: 'No token provided.'
-        });
-
-    }
-});
-/**
  * Synchronization between sequelize and database
  */
 //Sync Database
@@ -98,7 +68,12 @@ models.sequelize.sync().then(function() {
  * Default router. Secured by auth
  */
 app.use('/', indexRouter);
-
+/**
+ * Redirect to index as a fallback when no routes match
+ */
+app.get('/*', function(req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+});
 /**
  * 404
  */
