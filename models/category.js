@@ -29,7 +29,7 @@ module.exports = (sequelize, Sequelize) => {
         },
         disputed_t1_ta_id: {
             type: Sequelize.INTEGER,
-            allowNull: true
+            allowNull: false
         },
         order_position: {
             type: Sequelize.INTEGER,
@@ -41,31 +41,38 @@ module.exports = (sequelize, Sequelize) => {
         },
         taxable_income: {
             type: Sequelize.DECIMAL(15,2),
-            notEmpty: true
+            allowNull: true,
+            defaultValue: null
         },
         income_subject_to_gnp: {
             type: Sequelize.DECIMAL(15,2),
-            notEmpty: true
+            allowNull: true,
+            defaultValue: null
         },
         other_amounts_payable: {
             type: Sequelize.DECIMAL(15,2),
-            notEmpty: true
+            allowNull: true,
+            defaultValue: null
         },
         credits_applied_on_filing: {
             type: Sequelize.DECIMAL(15,2),
-            notEmpty: true
+            allowNull: true,
+            defaultValue: null
         },
         federal_non_refundable_tax_credits: {
             type: Sequelize.DECIMAL(15,2),
-            notEmpty: true
+            allowNull: true,
+            defaultValue: null
         },
         provincial_non_refundable_tax_credits: {
             type: Sequelize.DECIMAL(15,2),
-            notEmpty: true
+            allowNull: true,
+            defaultValue: null
         },
         other_penalties: {
             type: Sequelize.DECIMAL(15,2),
-            notEmpty: true
+            allowNull: true,
+            defaultValue: null
         }
     },
     {
