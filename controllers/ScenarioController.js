@@ -14,7 +14,6 @@ const to = require('../utils').to;
 const create = async function(req, res) {
     res.setHeader ( 'Content-Type', 'application/json' );
     const body = req.body;
-
     if(!body.case_id) {
         return ReE(res, 'Case id is not exist', 422);
     }
@@ -26,15 +25,6 @@ const create = async function(req, res) {
     }
     if(!body.description) {
         return ReE(res, 'Description value is not exist', 422);
-    }
-    if(!body.taxes) {
-        return ReE(res, 'Taxes value is not exist', 422);
-    }
-    if(!body.penalties) {
-        return ReE(res, 'Penalties value is not exist', 422);
-    }
-    if(!body.interest) {
-        return ReE(res, 'Interest value is not exist', 422);
     }
     else {
         let err, position;
@@ -173,18 +163,6 @@ const update = async function (req, res) {
     }
     if(!body.description) {
         return ReE(res, 'Description value is not exist', 422);
-    }
-    if(!body.taxable_income) {
-        return ReE
-    }
-    if(!body.taxes) {
-        return ReE(res, 'Taxes value is not exist', 422);
-    }
-    if(!body.penalties) {
-        return ReE(res, 'Penalties value is not exist', 422);
-    }
-    if(!body.interest) {
-        return ReE(res, 'Interest value is not exist', 422);
     }
     else {
         let err, scenario;

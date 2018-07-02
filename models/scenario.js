@@ -42,23 +42,23 @@ module.exports = (sequelize, Sequelize) => {
         },
         taxable_income: {
             type: Sequelize.DECIMAL(15,2),
-            notEmpty: true,
-            defaultValue: 0.00
+            allowNull: true,
+            defaultValue: null,
         },
         taxes: {
             type: Sequelize.DECIMAL(15,2),
-            notEmpty: true,
-            defaultValue: 0.00
+            allowNull: true,
+            defaultValue: null,
         },
         penalties: {
             type: Sequelize.DECIMAL(15,2),
-            notEmpty: true,
-            defaultValue: 0.00
+            allowNull: true,
+            defaultValue: null,
         },
         interest: {
             type: Sequelize.DECIMAL(15,2),
-            notEmpty: true,
-            defaultValue: 0.00
+            allowNull: true,
+            defaultValue: null,
         },
         order_position: {
             type: Sequelize.INTEGER,
