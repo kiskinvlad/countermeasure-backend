@@ -62,7 +62,6 @@ const getStates = async function(){
         {label:'Nunavut', value:'NU'},
         {label:'Ontario', value:'ON'},
         {label:'Prince Edward Island', value:'PE'},
-        {label:'Quebec', value:'QC'},
         {label:'Saskatchewan', value:'SK'},
         {label:'Yukon', value:'YT'}
     ];

@@ -1,4 +1,5 @@
 const jsonexport = require('jsonexport');
+const CaseService = require('../services/CaseService');
 
 const ReE = require('../utils').ReE;
 /**
@@ -9,7 +10,7 @@ const ReE = require('../utils').ReE;
  * @return {Promise<void>}
  */
 const createCvs = async function (req, res) {
-    const json_data = req.body;
+    const json_data = req.body.json;
     jsonexport(json_data, function(err, csv){
         if(err) return ReE( res, err, 422 );
         res.set({
@@ -17,7 +18,14 @@ const createCvs = async function (req, res) {
             'Content-Disposition': 'attachment; filename=out.csv',
             'Content-Type': 'text/csv'
         });
-        res.send(csv);
+
+        CaseService.getCase(req.body.case_id)
+            .then(data => {
+                res.send({data: csv, matter_id: data.matter_id});
+            })
+            .catch(error => {
+                return ReE(res, err, 422);
+            })
     });
 };
 
