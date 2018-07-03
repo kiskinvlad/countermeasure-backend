@@ -54,7 +54,7 @@ const getAllCases = async function(req, res) {
     switch (filter_param.id) {
         case 1: // All
             break;
-        case 2: // Updated in the last week
+        case 2: // Recent - Updated in the last week
             filter_sql.updated_at = {
                 [Op.gte]: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
                 [Op.lt]: new Date()
@@ -65,7 +65,7 @@ const getAllCases = async function(req, res) {
     }
 
     //sorting query
-    sort_sql = [[sort_param, 'ASC']];
+    sort_sql = [[sort_param, sort_param === 'updated_at' ? 'DESC' : 'ASC']];
 
     // find all by pagination
     [err, cases] = await to(
@@ -125,6 +125,19 @@ const getFilterSql = async function (req) {
 };
 
 module.exports.getFilterSql = getFilterSql;
+
+const getCase = async function(id) {
+    let err, data;
+    [err, data] = await to(
+        Case.findOne({
+            where: {case_id: id}
+        })
+    );
+    if(err) TE(err.message);
+    return data;
+}
+module.exports.getCase = getCase;
+
 
 const getCount = async function(where) {
     let err, data;
