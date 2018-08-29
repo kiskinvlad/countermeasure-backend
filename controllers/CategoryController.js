@@ -27,27 +27,6 @@ const create = async function(req, res) {
     if(body.name === null) {
         return ReE(res, 'Category name is not exist', 422);
     }
-    if (!body.taxable_income) {
-        return ReE(res, 'Taxable income value is not exist', 422);
-    }
-    if(!body.income_subject_to_gnp) {
-        return ReE(res, 'Income subject to GNP income value is not exist', 422);
-    }
-    if(!body.other_amounts_payable) {
-        return ReE(res, 'Other amounts payable value is not exist', 422);
-    }
-    if(!body.credits_applied_on_filing) {
-        return ReE(res, 'Credits applied on filing value is not exist', 422);
-    }
-    if(!body.federal_non_refundable_tax_credits) {
-        return ReE(res, 'Non-refundable federal tax credits value is not exist', 422);
-    }
-    if(!body.provincial_non_refundable_tax_credits) {
-        return ReE(res, 'Non-refundable provincial tax credits value is not exist', 422);
-    }
-    if(!body.other_penalties) {
-        return ReE(res, 'Other penalties value is not exist', 422);
-    }
     else {
         let err, position;
         if(err) return ReE(res, err, 422);
@@ -186,27 +165,6 @@ const update = async function (req, res) {
     }
     if(body.name === null) {
         return ReE(res, 'Category name is not exist', 422);
-    }
-    if (!body.taxable_income) {
-        return ReE(res, 'Taxable income value is not exist', 422);
-    }
-    if(!body.income_subject_to_gnp) {
-        return ReE(res, 'Income subject to GNP income value is not exist', 422);
-    }
-    if(!body.other_amounts_payable) {
-        return ReE(res, 'Other amounts payable value is not exist', 422);
-    }
-    if(!body.credits_applied_on_filing) {
-        return ReE(res, 'Credits applied on filing value is not exist', 422);
-    }
-    if(!body.federal_non_refundable_tax_credits) {
-        return ReE(res, 'Non-refundable federal tax credits value is not exist', 422);
-    }
-    if(!body.provincial_non_refundable_tax_credits) {
-        return ReE(res, 'Non-refundable provincial tax credits value is not exist', 422);
-    }
-    if(!body.other_penalties) {
-        return ReE(res, 'Other penalties value is not exist', 422);
     }
     else {
         let err, category;
